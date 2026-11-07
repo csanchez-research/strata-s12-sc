@@ -1,0 +1,921 @@
+{
+  "$defs": {
+    "BandRecord": {
+      "additionalProperties": false,
+      "description": "One band of the output tile.",
+      "properties": {
+        "name": {
+          "description": "Band name as in the source collection (e.g. B8A, VV).",
+          "title": "Name",
+          "type": "string"
+        },
+        "index": {
+          "description": "1-based band index in the output GeoTIFF.",
+          "title": "Index",
+          "type": "integer"
+        },
+        "origin": {
+          "description": "dlite: copied from the D_lite tile; provider: downloaded by this tool.",
+          "enum": [
+            "dlite",
+            "provider"
+          ],
+          "title": "Origin",
+          "type": "string"
+        },
+        "derived": {
+          "description": "True only for channels computed from others. The tool never derives; the only derived channel is VV_VH_DIFF, inherited from D_lite.",
+          "title": "Derived",
+          "type": "boolean"
+        },
+        "status": {
+          "enum": [
+            "ok",
+            "failed"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "native_resolution_m": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Native pixel size of the band.",
+          "title": "Native Resolution M"
+        },
+        "provider": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Provider module that returned the band.",
+          "title": "Provider"
+        },
+        "request_group": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Download request the band came from (bands are fetched in groups and composed locally; see attempts).",
+          "title": "Request Group"
+        },
+        "attempts": {
+          "description": "Download attempts for this band.",
+          "title": "Attempts",
+          "type": "integer"
+        },
+        "error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Last error if status is failed.",
+          "title": "Error"
+        },
+        "dtype": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Dtype"
+        },
+        "nodata": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Nodata"
+        },
+        "min": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Min"
+        },
+        "max": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Max"
+        },
+        "median": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Median of the finite pixels, in DN. Reflectance = (median + boa_add_offset) / 10000.",
+          "title": "Median"
+        },
+        "n_nonfinite": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "N Nonfinite"
+        },
+        "xxhash64": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "xxHash64 of this band's decoded pixel array.",
+          "title": "Xxhash64"
+        }
+      },
+      "required": [
+        "name",
+        "index",
+        "origin",
+        "derived",
+        "status",
+        "native_resolution_m",
+        "provider",
+        "request_group",
+        "attempts",
+        "error",
+        "dtype",
+        "nodata",
+        "min",
+        "max",
+        "n_nonfinite",
+        "xxhash64"
+      ],
+      "title": "BandRecord",
+      "type": "object"
+    },
+    "Classification": {
+      "additionalProperties": false,
+      "properties": {
+        "season": {
+          "description": "Meteorological season, hemisphere-corrected.",
+          "title": "Season",
+          "type": "string"
+        },
+        "hemisphere": {
+          "enum": [
+            "north",
+            "south"
+          ],
+          "title": "Hemisphere",
+          "type": "string"
+        },
+        "season_raw": {
+          "title": "Season Raw",
+          "type": "string"
+        },
+        "land_cover_class": {
+          "description": "Dominant ESA WorldCover 2021 v200 class.",
+          "title": "Land Cover Class",
+          "type": "string"
+        },
+        "class_id": {
+          "title": "Class Id",
+          "type": "integer"
+        },
+        "geographic_region": {
+          "title": "Geographic Region",
+          "type": "string"
+        },
+        "label_purity": {
+          "description": "Fraction covered by the dominant class.",
+          "title": "Label Purity",
+          "type": "number"
+        },
+        "label_composition": {
+          "items": {
+            "$ref": "#/$defs/LabelShare"
+          },
+          "title": "Label Composition",
+          "type": "array"
+        },
+        "label_source": {
+          "title": "Label Source",
+          "type": "string"
+        }
+      },
+      "required": [
+        "season",
+        "hemisphere",
+        "season_raw",
+        "land_cover_class",
+        "class_id",
+        "geographic_region",
+        "label_purity",
+        "label_composition",
+        "label_source"
+      ],
+      "title": "Classification",
+      "type": "object"
+    },
+    "FallbackInfo": {
+      "additionalProperties": false,
+      "description": "A tile asked again from the fallback provider because GEE left bands missing.\n\nThe whole tile is requested (never single bands), so a tile never mixes\nproviders. The copy is used only if every band came back and its own reference\ncheck is identical; otherwise the GEE result stays and this records why.",
+      "properties": {
+        "provider": {
+          "description": "Fallback provider module, e.g. pc.",
+          "title": "Provider",
+          "type": "string"
+        },
+        "reason": {
+          "description": "Bands GEE did not return.",
+          "title": "Reason",
+          "type": "string"
+        },
+        "product_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "ESA product name used to find the scene.",
+          "title": "Product Id"
+        },
+        "used": {
+          "description": "True if the bands of the tile come from this provider.",
+          "title": "Used",
+          "type": "boolean"
+        },
+        "outcome": {
+          "title": "Outcome",
+          "type": "string"
+        },
+        "reference_check": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/ReferenceCheck"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Reference check of the fallback copy, if it was fetched.",
+          "title": "Reference Check"
+        }
+      },
+      "required": [
+        "provider",
+        "reason",
+        "product_id",
+        "used",
+        "outcome"
+      ],
+      "title": "FallbackInfo",
+      "type": "object"
+    },
+    "GridInfo": {
+      "additionalProperties": false,
+      "properties": {
+        "crs": {
+          "title": "Crs",
+          "type": "string"
+        },
+        "transform": {
+          "maxItems": 6,
+          "minItems": 6,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Transform",
+          "type": "array"
+        },
+        "width": {
+          "title": "Width",
+          "type": "integer"
+        },
+        "height": {
+          "title": "Height",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "crs",
+        "transform",
+        "width",
+        "height"
+      ],
+      "title": "GridInfo",
+      "type": "object"
+    },
+    "LabelShare": {
+      "additionalProperties": false,
+      "properties": {
+        "class_id": {
+          "description": "ESA WorldCover class code.",
+          "title": "Class Id",
+          "type": "integer"
+        },
+        "class_name": {
+          "title": "Class Name",
+          "type": "string"
+        },
+        "ratio": {
+          "description": "Fraction of the tile covered by this class.",
+          "title": "Ratio",
+          "type": "number"
+        }
+      },
+      "required": [
+        "class_id",
+        "class_name",
+        "ratio"
+      ],
+      "title": "LabelShare",
+      "type": "object"
+    },
+    "NotAdded": {
+      "additionalProperties": false,
+      "description": "A band the tool did not add to the tile, and why.",
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "reason": {
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "reason"
+      ],
+      "title": "NotAdded",
+      "type": "object"
+    },
+    "OutputIntegrity": {
+      "additionalProperties": false,
+      "properties": {
+        "checksum": {
+          "title": "Checksum",
+          "type": "string"
+        },
+        "algorithm": {
+          "const": "xxhash64",
+          "title": "Algorithm",
+          "type": "string"
+        },
+        "scope": {
+          "const": "decoded pixel array (bands, height, width)",
+          "title": "Scope",
+          "type": "string"
+        }
+      },
+      "required": [
+        "checksum",
+        "algorithm",
+        "scope"
+      ],
+      "title": "OutputIntegrity",
+      "type": "object"
+    },
+    "PairedSar": {
+      "additionalProperties": false,
+      "description": "Acquisition geometry of the Sentinel-1 scene paired with this tile.\n\nRead from the GEE image properties of COPERNICUS/S1_GRD (property names as\nin the GEE catalog, read 2026-10-25). Useful to split or filter pairs by\nlook direction: the same ground seen ascending and descending differs in\nlayover, shadow and local incidence angle.",
+      "properties": {
+        "image_id": {
+          "description": "provenance.sentinel1_image_id of the D_lite pair.",
+          "title": "Image Id",
+          "type": "string"
+        },
+        "orbit_pass": {
+          "anyOf": [
+            {
+              "enum": [
+                "ASCENDING",
+                "DESCENDING"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "GEE orbitProperties_pass: orbit direction at the start of the product.",
+          "title": "Orbit Pass"
+        },
+        "relative_orbit_number": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "GEE relativeOrbitNumber_start (track).",
+          "title": "Relative Orbit Number"
+        },
+        "absolute_orbit_number": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "GEE orbitNumber_start.",
+          "title": "Absolute Orbit Number"
+        },
+        "platform": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "GEE platform_number (A, B, C...).",
+          "title": "Platform"
+        },
+        "instrument_mode": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "GEE instrumentMode (IW for D_lite).",
+          "title": "Instrument Mode"
+        },
+        "error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Why the fields are null, if they are.",
+          "title": "Error"
+        },
+        "properties": {
+          "type": "object",
+          "additionalProperties": true,
+          "description": "All GEE properties of the S1 scene, as received.",
+          "title": "Properties"
+        }
+      },
+      "required": [
+        "image_id",
+        "orbit_pass",
+        "relative_orbit_number",
+        "absolute_orbit_number",
+        "platform",
+        "instrument_mode",
+        "error",
+        "properties"
+      ],
+      "title": "PairedSar",
+      "type": "object"
+    },
+    "Radiometry": {
+      "additionalProperties": false,
+      "description": "Radiometric provenance of the Sentinel-2 scene, promoted from ``scene_properties``.\n\nRead from the GEE image properties of COPERNICUS/S2_SR (``PRODUCT_ID``,\n``PROCESSING_BASELINE``, ``BOA_ADD_OFFSET_<band>``, ``SENSING_ORBIT_DIRECTION``).\nReflectance = (DN + offset) / 10000, with the offset as published by ESA.",
+      "properties": {
+        "product_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "ESA product name (GEE PRODUCT_ID).",
+          "title": "Product Id"
+        },
+        "processing_baseline": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "GEE PROCESSING_BASELINE, e.g. 05.11.",
+          "title": "Processing Baseline"
+        },
+        "boa_add_offset": {
+          "additionalProperties": {
+            "type": "number"
+          },
+          "description": "GEE BOA_ADD_OFFSET_<band> for each band of the output tile. The DN stored in the tile still contain it (as in D_lite).",
+          "title": "Boa Add Offset",
+          "type": "object"
+        },
+        "sensing_orbit_direction": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "GEE SENSING_ORBIT_DIRECTION.",
+          "title": "Sensing Orbit Direction"
+        },
+        "error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Why fields are null or missing, if they are.",
+          "title": "Error"
+        }
+      },
+      "required": [
+        "product_id",
+        "processing_baseline",
+        "boa_add_offset",
+        "sensing_orbit_direction",
+        "error"
+      ],
+      "title": "Radiometry",
+      "type": "object"
+    },
+    "ReferenceCheck": {
+      "additionalProperties": false,
+      "description": "A band already in D_lite, downloaded again and compared pixel by pixel.",
+      "properties": {
+        "band": {
+          "title": "Band",
+          "type": "string"
+        },
+        "available": {
+          "description": "False when the provider did not return the band: nothing was compared.",
+          "title": "Available",
+          "type": "boolean"
+        },
+        "n_pixels": {
+          "title": "N Pixels",
+          "type": "integer"
+        },
+        "n_equal": {
+          "title": "N Equal",
+          "type": "integer"
+        },
+        "max_abs_diff": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Max Abs Diff"
+        },
+        "identical": {
+          "title": "Identical",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "band",
+        "available",
+        "n_pixels",
+        "n_equal",
+        "max_abs_diff",
+        "identical"
+      ],
+      "title": "ReferenceCheck",
+      "type": "object"
+    },
+    "SourceInfo": {
+      "additionalProperties": false,
+      "properties": {
+        "dlite_doi": {
+          "description": "Version DOI of the D_lite record used as input.",
+          "title": "Dlite Doi",
+          "type": "string"
+        },
+        "dlite_filename": {
+          "title": "Dlite Filename",
+          "type": "string"
+        },
+        "dlite_file_sha256": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "sha256 of the D_lite GeoTIFF as listed in member_index.csv of the record.",
+          "title": "Dlite File Sha256"
+        },
+        "dlite_checksum": {
+          "description": "integrity.checksum of the D_lite tile.",
+          "title": "Dlite Checksum",
+          "type": "string"
+        },
+        "dlite_checksum_ok": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Whether that checksum matches the xxHash64 of the D_lite pixels as read by complete.",
+          "title": "Dlite Checksum Ok"
+        },
+        "tile_id": {
+          "title": "Tile Id",
+          "type": "string"
+        },
+        "pair_id": {
+          "title": "Pair Id",
+          "type": "string"
+        },
+        "sensor": {
+          "enum": [
+            "S1",
+            "S2"
+          ],
+          "title": "Sensor",
+          "type": "string"
+        },
+        "image_id": {
+          "description": "Scene id as recorded in the D_lite sidecar.",
+          "title": "Image Id",
+          "type": "string"
+        },
+        "product_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ESA product name as recorded in the D_lite sidecar (acquisition.product_id), by which Planetary Computer finds the scene. New in 1.5.0: absent in sidecars of schema 1.4.0, such as those of STRATA-S12-SC 1.0.0.",
+          "title": "Product Id"
+        }
+      },
+      "required": [
+        "dlite_doi",
+        "dlite_filename",
+        "dlite_checksum",
+        "tile_id",
+        "pair_id",
+        "sensor",
+        "image_id"
+      ],
+      "title": "SourceInfo",
+      "type": "object"
+    },
+    "ToolInfo": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "const": "strata-complete",
+          "title": "Name",
+          "type": "string"
+        },
+        "version": {
+          "title": "Version",
+          "type": "string"
+        },
+        "base_image": {
+          "description": "Base image with digest the tool ran on.",
+          "title": "Base Image",
+          "type": "string"
+        },
+        "provider_versions": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "e.g. earthengine-api version.",
+          "title": "Provider Versions",
+          "type": "object"
+        }
+      },
+      "required": [
+        "name",
+        "version",
+        "base_image",
+        "provider_versions"
+      ],
+      "title": "ToolInfo",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Sidecar of one STRATA-S12-SC tile.",
+  "properties": {
+    "schema_version": {
+      "description": "Version of this schema (1.5.0).",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "created": {
+      "format": "date-time",
+      "title": "Created",
+      "type": "string"
+    },
+    "tool": {
+      "$ref": "#/$defs/ToolInfo"
+    },
+    "source": {
+      "$ref": "#/$defs/SourceInfo"
+    },
+    "grid": {
+      "$ref": "#/$defs/GridInfo"
+    },
+    "provider": {
+      "anyOf": [
+        {
+          "enum": [
+            "gee",
+            "pc"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Provider of this tile: the bands added and the reference check. One provider per tile.",
+      "title": "Provider"
+    },
+    "complete": {
+      "description": "True when the reference check passed and every band has status ok.",
+      "title": "Complete",
+      "type": "boolean"
+    },
+    "reference_check": {
+      "description": "D_lite bands re-downloaded and compared; all identical means the provider returned the same scene on the same grid.",
+      "items": {
+        "$ref": "#/$defs/ReferenceCheck"
+      },
+      "title": "Reference Check",
+      "type": "array"
+    },
+    "bands": {
+      "description": "The bands in the output GeoTIFF. If the reference check did not pass, only the D_lite bands, unchanged and in their D_lite order.",
+      "items": {
+        "$ref": "#/$defs/BandRecord"
+      },
+      "title": "Bands",
+      "type": "array"
+    },
+    "not_added": {
+      "default": [],
+      "description": "Bands not added because the reference check did not pass; the tile is then the D_lite tile as published.",
+      "items": {
+        "$ref": "#/$defs/NotAdded"
+      },
+      "title": "Not Added",
+      "type": "array"
+    },
+    "scene_properties": {
+      "additionalProperties": true,
+      "description": "Scene metadata exactly as returned by the provider (GEE image properties).",
+      "title": "Scene Properties",
+      "type": "object"
+    },
+    "fallback": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/FallbackInfo"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Not set by this version: a second provider is a separate run, recorded in ``provider``."
+    },
+    "radiometry": {
+      "$ref": "#/$defs/Radiometry"
+    },
+    "classification": {
+      "$ref": "#/$defs/Classification",
+      "description": "Copied unchanged from the D_lite sidecar (inherited, not recomputed)."
+    },
+    "paired_sar": {
+      "$ref": "#/$defs/PairedSar"
+    },
+    "timings_s": {
+      "additionalProperties": {
+        "type": "number"
+      },
+      "description": "Wall-clock seconds per step of this tile: fetch_<group> (retries included), fallback_<provider>_<group> if the fallback was tried, scene_properties_s2, scene_properties_s1, write, total. Measured with the number of workers recorded in the run summary (log/).",
+      "title": "Timings S",
+      "type": "object"
+    },
+    "integrity": {
+      "$ref": "#/$defs/OutputIntegrity"
+    }
+  },
+  "required": [
+    "schema_version",
+    "created",
+    "tool",
+    "source",
+    "grid",
+    "complete",
+    "reference_check",
+    "bands",
+    "scene_properties",
+    "radiometry",
+    "classification",
+    "paired_sar",
+    "timings_s",
+    "integrity"
+  ],
+  "title": "ScSidecar",
+  "type": "object",
+  "$id": "strata-complete/sc_sidecar/1.5.0"
+}

@@ -1,0 +1,6 @@
+# LF everywhere: files are edited on Windows and run in a Linux container.
+* text=auto eol=lf
+*.tif binary
+*.tiff binary
+*.zip binary
+*.tar binary

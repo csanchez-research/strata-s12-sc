@@ -1,0 +1,47 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below, together with the STRATA-S12 (D_lite) dataset it completes."
+title: "strata-complete: spectral completion of STRATA-S12 SAR-optical pairs"
+type: software
+version: 1.0.0
+license: MIT
+authors:
+  - family-names: Sanchez-Leon
+    given-names: Christian
+    orcid: "https://orcid.org/0009-0005-0994-9946"
+    affiliation: "Software College, Northeastern University, Shenyang 110819, China"
+keywords:
+  - Sentinel-1
+  - Sentinel-2
+  - SAR-optical
+  - multispectral
+  - provenance
+  - Earth observation
+references:
+  - type: data
+    title: "STRATA-S12 (D_lite): A Class-Balanced Subset of the Co-Registered Sentinel-1/Sentinel-2 Corpus"
+    authors:
+      - family-names: Sanchez-Leon
+        given-names: Christian
+      - family-names: Chen
+        given-names: Dongming
+      - family-names: Wang
+        given-names: Dongqi
+    version: 2.0.0
+    year: 2026
+    publisher:
+      name: Zenodo
+    doi: 10.5281/zenodo.23837956
+    license: CC-BY-4.0
+  - type: data
+    title: "STRATA-S12 Spectral Completion (STRATA-S12-SC): D_lite 2.0.0 Pairs Completed to the 12 Sentinel-2 L2A Bands"
+    authors:
+      - family-names: Sanchez-Leon
+        given-names: Christian
+      - family-names: Chen
+        given-names: Dongming
+    version: 1.0.0
+    year: 2026
+    publisher:
+      name: Zenodo
+    doi: 10.5281/zenodo.23888967
+    license: CC-BY-4.0

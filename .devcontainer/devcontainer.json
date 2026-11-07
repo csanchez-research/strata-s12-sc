@@ -1,0 +1,21 @@
+{
+  "name": "strata-complete",
+  "dockerComposeFile": ["../docker-compose.yml"],
+  "service": "dev",
+  "workspaceFolder": "/workspace",
+  "shutdownAction": "stopCompose",
+  // Live report (`serve`): docker-compose.yml publishes it on the host with the same port
+  // inside and outside (SC_SERVE_HOST_PORT, 8765 by default), and `serve` prints that
+  // address. VS Code forwards the port it sees listening, which is what brings the page
+  // to your laptop when the container runs on a remote Linux machine (Remote-SSH); it
+  // does so silently, see the Ports panel.
+  "otherPortsAttributes": { "onAutoForward": "silent" },
+  "customizations": {
+    "vscode": {
+      "extensions": ["ms-python.python", "charliermarsh.ruff"],
+      "settings": {
+        "python.defaultInterpreterPath": "/usr/local/bin/python"
+      }
+    }
+  }
+}

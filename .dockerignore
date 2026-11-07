@@ -1,0 +1,6 @@
+# Build context = only what the build reads: the lock and the optional
+# nexus.env. Everything else is excluded, so editing code, docs or data never
+# invalidates the pip layer, and no data or credentials reach the builder.
+*
+!requirements.txt
+!nexus.env

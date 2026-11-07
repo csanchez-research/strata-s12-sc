@@ -1,0 +1,1078 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>STRATA-S12-SC Provenance Report</title>
+<script>
+  try { const t = localStorage.getItem("sc-theme"); if (t === "light" || t === "dark") document.documentElement.dataset.theme = t; } catch (e) {}
+</script>
+<style>
+:root, :root[data-theme="dark"] {
+  --bg: #0f1216; --panel: #171b21; --panel-2: #1d222a; --ink: #e6e9ee; --muted: #9aa4b2; --line: #2a313b;
+  --ok: #4cc38a; --ok-bg: #12301f; --bad: #f97066; --bad-bg: #3a1714;
+  --warn: #f0b44c; --warn-bg: #352712; --none: #9aa4b2; --none-bg: #232a33;
+  --dlite: #98a2b3; --gee: #5b9cf5; --pc: #b38cf0; --failed: #f97066; --unverified: #f0b44c;
+  --accent: #5b9cf5; --shadow: none; --backdrop: rgba(0,0,0,.6);
+}
+:root[data-theme="light"] {
+  --bg: #f6f7f9; --panel: #ffffff; --panel-2: #f1f3f6; --ink: #1b1f24; --muted: #5d6673; --line: #dfe3e8;
+  --ok: #1f7a4d; --ok-bg: #e3f3ea; --bad: #b42318; --bad-bg: #fde8e6;
+  --warn: #9a6200; --warn-bg: #fdf1d8; --none: #5d6673; --none-bg: #eceff2;
+  --dlite: #475467; --gee: #1d63c9; --pc: #7a3fc4; --failed: #b42318; --unverified: #9a6200;
+  --accent: #1d63c9; --shadow: 0 1px 2px rgba(16,24,40,.06), 0 1px 3px rgba(16,24,40,.08); --backdrop: rgba(0,0,0,.45);
+}
+:root, :root[data-theme="dark"] { --prov-entity: #4a4420; --prov-activity: #24365c; --prov-agent: #4d3418; }
+:root[data-theme="light"] { --prov-entity: #fffbd6; --prov-activity: #d9e4ff; --prov-agent: #fde3c3; }
+.pn-title { font-size: 11.5px; fill: var(--ink) !important; font-weight: 600; }
+.pn-sub { font-size: 10px; fill: var(--muted); font-family: var(--mono); }
+details summary { cursor: pointer; color: var(--muted); margin: 6px 0; }
+:root { --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; color-scheme: dark; }
+:root[data-theme="light"] { color-scheme: light; }
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--bg); color: var(--ink);
+  font: 14px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+.app { display: grid; grid-template-columns: 200px 1fr; min-height: 100vh; }
+.side { position: sticky; top: 0; height: 100vh; border-right: 1px solid var(--line); padding: 20px 12px; display: flex; flex-direction: column; gap: 4px; background: var(--panel); }
+.brand { font-weight: 700; font-size: 15px; padding: 0 10px 14px; letter-spacing: -.01em; }
+.brand small { display: block; font-weight: 400; color: var(--muted); font-size: 12px; }
+.navlink { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 8px; color: var(--ink); text-decoration: none; font-weight: 500; }
+.navlink:hover { background: var(--panel-2); }
+.navlink[aria-current="page"] { background: var(--panel-2); color: var(--accent); }
+.navlink span { color: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; }
+.power { margin-top: auto; display: flex; align-items: center; gap: 8px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; background: none; color: var(--muted); font: inherit; font-weight: 500; cursor: pointer; }
+.power:hover { color: var(--bad); border-color: var(--bad); }
+.power svg { width: 16px; height: 16px; flex: none; }
+main { min-width: 0; padding: 20px 24px 64px; max-width: 1320px; }
+.top { display: flex; align-items: flex-start; gap: 16px; }
+.top h1 { font-size: 22px; margin: 0 0 4px; letter-spacing: -.01em; }
+.top p { margin: 0; color: var(--muted); overflow-wrap: anywhere; }
+.top .right { margin-left: auto; display: flex; gap: 10px; align-items: center; }
+@media (max-width: 760px) {
+  .app { grid-template-columns: 1fr; }
+  .side { position: static; height: auto; flex-direction: row; flex-wrap: wrap; align-items: center; border-right: 0; border-bottom: 1px solid var(--line); padding: 8px 16px; }
+  .brand { padding: 0 8px 0 0; }
+  .brand small { display: none; }
+  .power { margin: 0 0 0 auto; }
+  .power b { display: none; }
+  main { padding: 16px 16px 48px; }
+}
+.mono { font-family: var(--mono); font-size: 12.5px; word-break: break-all; }
+a { color: var(--accent); }
+.muted { color: var(--muted); }
+section { margin-top: 22px; }
+h2 { font-size: 13px; margin: 0 0 10px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+.fstep { display: grid; grid-template-columns: minmax(180px, 1.2fr) 3fr 64px; gap: 12px; align-items: center; padding: 8px 0; border-top: 1px solid var(--line); }
+.fstep:first-of-type { border-top: 0; }
+.fstep .lbl b { display: block; font-weight: 600; }
+.fstep .lbl span { color: var(--muted); font-size: 12.5px; }
+.fbar { height: 12px; border-radius: 6px; background: var(--panel-2); overflow: hidden; }
+.fbar i { display: block; height: 100%; background: var(--gee); border-radius: 6px; }
+.fstep.last .fbar i { background: var(--ok); }
+.fstep .n { text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; }
+.flost { grid-column: 1 / -1; margin: 2px 0 0; font-size: 12.5px; color: var(--muted); }
+.flost summary { cursor: pointer; color: var(--bad); }
+.flost ul { margin: 6px 0 0; padding-left: 18px; }
+.flost a { cursor: pointer; }
+@media (max-width: 760px) { .fstep { grid-template-columns: 1fr 64px; } .fstep .fbar { grid-column: 1 / -1; grid-row: 2; } }
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+.kpi { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; box-shadow: var(--shadow); text-align: left; font: inherit; color: inherit; }
+button.kpi { cursor: pointer; } button.kpi:hover { border-color: var(--accent); }
+.kpi b { display: block; font-size: 26px; font-variant-numeric: tabular-nums; }
+.kpi span { color: var(--muted); font-size: 12.5px; }
+.panels { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 1000px) { .panels { grid-template-columns: 1fr; } }
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px; box-shadow: var(--shadow); overflow-x: auto; }
+.panel h3 { margin: 0 0 8px; font-size: 14px; }
+table { border-collapse: collapse; width: 100%; font-variant-numeric: tabular-nums; }
+th, td { text-align: left; padding: 5px 8px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+th { font-weight: 600; color: var(--muted); font-size: 12px; }
+td.num, th.num { text-align: right; }
+.badge { display: inline-block; padding: 1px 8px; border-radius: 999px; font-size: 12px; font-weight: 600; }
+.s-COMPLETE { color: var(--ok); background: var(--ok-bg); }
+.s-MISALIGNED { color: var(--bad); background: var(--bad-bg); }
+.s-PARTIAL { color: var(--warn); background: var(--warn-bg); }
+.s-UNAVAILABLE { color: var(--none); background: var(--none-bg); }
+.s-FLAGGED { color: var(--warn); background: var(--warn-bg); }
+.live { display: inline-flex; align-items: center; gap: 6px; color: var(--ok); font-weight: 600; }
+.live::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--ok); animation: pulse 2s infinite; }
+@keyframes pulse { 50% { opacity: .3; } }
+@media (prefers-reduced-motion: reduce) { .live::before { animation: none; } }
+.livebar { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-top: 8px; }
+.btn { font: inherit; border: 1px solid var(--line); background: var(--panel); color: var(--ink); border-radius: 8px; padding: 5px 12px; cursor: pointer; }
+.btn[aria-pressed="true"] { border-color: var(--accent); color: var(--accent); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+.pairrow { align-items: stretch; }
+.review { display: flex; flex-direction: column; }
+.review .rvnote { flex: 1; min-height: 160px; resize: vertical; }
+.fieldlabel { font-size: 12.5px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 6px; }
+textarea { width: 100%; min-height: 80px; font: inherit; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 8px; }
+.c-yes { color: var(--ok); } .c-no { color: var(--bad); } .c-na { color: var(--muted); }
+.theme { position: relative; width: 52px; height: 28px; border-radius: 999px; border: 1px solid var(--line); background: var(--panel-2); cursor: pointer; padding: 0; flex: none; }
+.theme svg { position: absolute; top: 6px; width: 14px; height: 14px; color: var(--muted); }
+.theme .sun { left: 7px; } .theme .moon { right: 7px; }
+.theme .knob { position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: var(--accent); transition: transform .2s; }
+:root[data-theme="dark"] .theme .knob { transform: translateX(24px); }
+@media (prefers-reduced-motion: reduce) { .theme .knob { transition: none; } }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 12.5px; color: var(--muted); margin: 0 0 12px; }
+.legend i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; vertical-align: -2px; margin-right: 5px; }
+.o-dlite { background: var(--dlite); } .o-gee { background: var(--gee); } .o-pc { background: var(--pc); }
+.o-failed { background: repeating-linear-gradient(45deg, var(--failed) 0 3px, transparent 3px 6px); border: 1px solid var(--failed); }
+.o-unverified { background: repeating-linear-gradient(45deg, var(--unverified) 0 3px, transparent 3px 6px); border: 1px solid var(--unverified); }
+.filters { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 12px; }
+.filters select, .filters input { font: inherit; color: var(--ink); background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 6px 8px; }
+.filters input { flex: 1 1 220px; min-width: 0; }
+.count { color: var(--muted); font-size: 12.5px; margin-left: auto; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 12px; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 10px; cursor: pointer; text-align: left; font: inherit; color: inherit; box-shadow: var(--shadow); }
+.card:hover, .card:focus-visible { border-color: var(--accent); outline: none; }
+.thumbs { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.thumbcap { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 10.5px; color: var(--muted); text-align: center; margin-top: 2px; }
+.strip.s1 { grid-template-columns: repeat(3, 1fr); }
+.thumbs img, .thumbs .noimg { width: 100%; aspect-ratio: 1; border-radius: 6px; display: block; background: var(--none-bg); }
+.card .row { display: flex; justify-content: space-between; align-items: center; gap: 6px; margin-top: 8px; }
+.card .title { font-weight: 600; font-size: 13px; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.card .marks { flex: none; }
+.bands { margin-top: 10px; }
+.bands .lbl { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); margin-bottom: 3px; }
+.strip { display: grid; grid-template-columns: repeat(12, 1fr); gap: 2px; }
+.strip i { height: 8px; border-radius: 2px; }
+.strip.names span { font-size: 9px; color: var(--muted); text-align: center; line-height: 1.6; }
+.marks { display: inline-flex; gap: 6px; align-items: center; }
+.noteicon { width: 15px; height: 15px; color: var(--warn); flex: none; }
+.peek { position: fixed; z-index: 50; width: 320px; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; box-shadow: 0 8px 24px rgba(0,0,0,.35); pointer-events: none; font-size: 12.5px; }
+.peek[hidden] { display: none; }
+.peek .kv { font-size: 12px; }
+dialog { width: min(1000px, 100vw - 24px); height: min(780px, 100vh - 24px); border: 1px solid var(--line); border-radius: 12px; padding: 0; background: var(--panel); color: var(--ink); overflow: hidden; }
+dialog[open] { display: flex; flex-direction: column; }
+dialog::backdrop { background: var(--backdrop); }
+.dhead { border-bottom: 1px solid var(--line); padding: 14px 16px 0; flex: none; }
+.dhead .r1 { display: flex; gap: 12px; align-items: flex-start; }
+.dhead h3 { margin: 0; font-size: 15px; word-break: break-all; }
+.dhead .close { margin-left: auto; }
+.tabs { display: flex; gap: 4px; margin-top: 12px; overflow-x: auto; scrollbar-width: none; }
+.tab { white-space: nowrap; font: inherit; border: 0; background: none; color: var(--muted); padding: 8px 12px; border-bottom: 2px solid transparent; cursor: pointer; font-weight: 500; }
+.tab[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--accent); }
+.dbody { flex: 1; overflow: auto; padding: 16px; overscroll-behavior: contain; }
+.tabpanel { display: grid; gap: 18px; }
+.tabpanel[hidden] { display: none; }
+.three { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; align-items: start; }
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: start; }
+.figs { display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-start; }
+.figside { display: grid; grid-template-columns: minmax(0, 312px) 1fr; gap: 20px; align-items: start; }
+@media (max-width: 860px) { .three, .two, .figside { grid-template-columns: 1fr; } }
+.kv { display: grid; grid-template-columns: max-content 1fr; gap: 4px 12px; font-size: 13px; margin: 0; }
+.kv dt { color: var(--muted); } .kv dd { margin: 0; min-width: 0; }
+.big { margin: 0; width: 100%; max-width: 312px; }
+.spec-cap { font-size: 12.5px; color: var(--muted); margin: 6px 0 2px; }
+.legacy { background: var(--warn-bg); color: var(--warn); border-radius: 8px; padding: 8px 12px; margin: 0 0 14px; font-size: 13px; }
+.legacy.small { margin: 8px 0 0; padding: 4px 8px; font-size: 12px; text-align: left; }
+.big img, .big .noimg { width: 100%; border-radius: 8px; display: block; aspect-ratio: 1; background: var(--none-bg); }
+/* A problem the data has on purpose or by fault, never a page error: boxed, with an icon. */
+.alert { display: flex; gap: 12px; align-items: flex-start; border: 1px solid var(--bad); background: var(--bad-bg);
+  border-radius: 8px; padding: 12px 14px; margin: 8px 0 12px; max-width: 760px; }
+.alert .ico, .noimg.err .ico { flex: none; width: 22px; height: 22px; border-radius: 50%; background: var(--bad);
+  color: #fff; font-weight: 700; display: grid; place-items: center; font-size: 14px; }
+.alert b { display: block; color: var(--bad); margin-bottom: 2px; }
+.alert p { margin: 2px 0 0; color: var(--ink); font-size: 13px; }
+.noimg.err { display: grid; place-content: center; justify-items: center; gap: 8px; border: 1px dashed var(--bad);
+  color: var(--bad); font-size: 13px; font-weight: 600; text-align: center; padding: 12px; box-sizing: border-box; }
+.big figcaption { color: var(--muted); font-size: 12px; margin-top: 4px; }
+svg text { fill: var(--muted); font-size: 11px; }
+.note { font-size: 12.5px; color: var(--muted); margin: 4px 0 8px; }
+footer { margin-top: 32px; color: var(--muted); font-size: 12px; }
+.pager { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin: 4px 0 12px; }
+.pager .count { margin-left: 0; }
+.btn:disabled { opacity: .45; cursor: default; }
+.static-note { background: var(--panel-2); border-radius: 8px; padding: 8px 12px; font-size: 13px; color: var(--muted); }
+</style>
+</head>
+<body>
+<div class="app">
+  <nav class="side" aria-label="Sections">
+    <div class="brand">STRATA-S12-SC<small>provenance report</small></div>
+    <a class="navlink" href="#home" data-view="home">Home</a>
+    <a class="navlink" href="#tiles" data-view="tiles">Tiles <span id="navCount"></span></a>
+    <a class="navlink" href="#strata" data-view="strata">Strata</a>
+    <a class="navlink" href="#spectra" data-view="spectra">Spectra</a>
+    <a class="navlink" href="#timing" data-view="timing">Timing</a>
+    <a class="navlink" href="#review" data-view="review">Review <span id="navReview"></span></a>
+    <button type="button" class="power" id="power" hidden title="Stop the live report server" aria-label="Stop server">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 3v9"/><path d="M6.3 6.3a8 8 0 1 0 11.4 0"/></svg><b>Stop server</b></button>
+  </nav>
+  <main>
+    <div class="top">
+      <div>
+        <h1 id="viewTitle">Run overview</h1>
+        <p id="meta"></p>
+        <div class="livebar" id="livebar"></div>
+      </div>
+      <div class="right">
+        <button class="theme" id="theme" type="button" role="switch" aria-label="Dark theme">
+          <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+          <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+          <span class="knob"></span>
+        </button>
+      </div>
+    </div>
+
+    <div id="view-home">
+      <section>
+        <h2>Run</h2>
+        <div class="kpis" id="kpis"></div>
+      </section>
+      <section>
+        <h2>From the input to the release</h2>
+        <div class="panel" id="funnel"></div>
+      </section>
+      <section class="panels">
+        <div class="panel" id="crossPanel"></div>
+        <div class="panel" id="bandsPanel"></div>
+      </section>
+      <footer id="foot"></footer>
+    </div>
+
+    <div id="view-tiles" hidden>
+      <section>
+        <div class="legend">
+          <span>Each card is one S1–S2 pair. Strips = where every band comes from:</span>
+          <span><i class="o-dlite"></i>from D_lite (published, copied)</span>
+          <span><i class="o-gee"></i>added from Google Earth Engine</span>
+          <span><i class="o-pc"></i>added from Planetary Computer (complete --provider pc)</span>
+          <span><i class="o-unverified"></i>not added: reference check failed, tile kept as published</span>
+          <span><i class="o-failed"></i>failed (nodata)</span>
+        </div>
+        <p class="note" id="previewNote"></p>
+        <div class="filters">
+          <select id="fState" aria-label="Verdict"><option value="">All verdicts</option></select>
+          <select id="fClass" aria-label="Land cover"><option value="">All classes</option></select>
+          <select id="fRegion" aria-label="Region"><option value="">All regions</option></select>
+          <select id="fSeason" aria-label="Season"><option value="">All seasons</option></select>
+          <select id="fCross" aria-label="Cross-check">
+            <option value="">Any cross-check</option>
+            <option value="identical">Cross-check identical</option>
+            <option value="differs">Cross-check differs</option>
+            <option value="none">Not cross-checked</option>
+          </select>
+          <select id="fReview" aria-label="Curator review">
+            <option value="">Any review</option>
+            <option value="flagged">Flagged by curator</option>
+            <option value="note">With a note</option>
+            <option value="clean">Not flagged</option>
+          </select>
+          <input id="fText" type="search" placeholder="Search tile or product name" aria-label="Search">
+          <span class="count" id="count"></span>
+        </div>
+        <div class="pager" id="pagerTop"></div>
+        <div class="grid" id="grid"></div>
+        <div class="pager" id="pagerBottom"></div>
+      </section>
+    </div>
+    <div id="view-strata" hidden>
+      <section>
+        <p class="note">Every stratum of the sample (land cover × region or season): verified tiles (COMPLETE) out of all tiles. Click a cell to see its tiles.</p>
+        <div class="filters"><span class="muted">Columns:</span>
+          <button class="btn" type="button" id="byRegion" aria-pressed="true">region</button>
+          <button class="btn" type="button" id="bySeason" aria-pressed="false">season</button>
+        </div>
+        <div class="panel" id="strataTable"></div>
+      </section>
+    </div>
+
+    <div id="view-spectra" hidden>
+      <section>
+        <p class="note">Median reflectance spectrum of each land-cover class: per band, the median over the verified tiles of the class of each tile's median. B1, B5–B9, B11 and B12 are the bands added by the tool; B2–B4 come from D_lite.</p>
+        <div class="panel" id="spectraPlot"></div>
+      </section>
+    </div>
+
+    <div id="view-timing" hidden>
+      <section>
+        <p class="note" id="timingNote"></p>
+        <div class="panel" id="timingTable"></div>
+      </section>
+    </div>
+
+    <div id="view-review" hidden>
+      <section>
+        <p class="note" id="reviewIntro">Tiles a curator flagged or annotated (review.json). Marks never change the tiles; flagged pairs are left out of the release by <span class="mono">package</span>.</p>
+        <div class="panel" id="reviewTable"></div>
+      </section>
+    </div>
+  </main>
+</div>
+
+<div class="peek" id="peek" hidden></div>
+<dialog id="detail" aria-labelledby="dTitle"></dialog>
+
+<script>
+let DATA = /*__DATA__*/null;
+const LIVE = /*__LIVE__*/false;
+const $ = (s, el = document) => el.querySelector(s);
+function h(tag, attrs = {}, ...kids) {
+  const el = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) {
+    if (v == null) continue;
+    if (k === "class") el.className = v; else if (k === "text") el.textContent = v;
+    else if (k.startsWith("on")) el.addEventListener(k.slice(2), v); else el.setAttribute(k, v);
+  }
+  for (const kid of kids.flat()) if (kid != null) el.append(kid instanceof Node ? kid : String(kid));
+  return el;
+}
+const fmt = (v, d = 0) => v == null ? "–" : Number(v).toLocaleString("en-US", { maximumFractionDigits: d, minimumFractionDigits: d });
+const pct = v => v == null ? "–" : (100 * v).toFixed(v < 0.001 && v > 0 ? 4 : 2) + " %";
+const UNVERIFIED = new Set(["MISALIGNED", "UNAVAILABLE"]);  // reference differs or was not returned
+// Rows carry one letter per S2 band (DATA.bands_order): d D_lite, g GEE, p Planetary Computer,
+// f failed, u not added (reference check failed), - not in the tile.
+const CODE = { d: "dlite", g: "gee", p: "pc", f: "failed", u: "unverified", "-": "unverified" };
+const ORIGIN_LABEL = { dlite: "D_lite", gee: "GEE", pc: "Planetary Computer", failed: "failed", unverified: "not added: reference check failed, tile kept as published" };
+const slots = t => DATA.bands_order.map((name, i) => { const cls = CODE[t.codes[i]]; return { name, cls, title: ORIGIN_LABEL[cls] }; });
+const nCode = (t, set) => [...t.codes].filter(c => set.includes(c)).length;
+const addedText = t => UNVERIFIED.has(t.state) ? `nothing added · original kept (${nCode(t, "d")} bands)`
+  : `${nCode(t, "gp")} added · ${nCode(t, "dgpf")} total`;
+// Detail (live only): the full band records of the tile.
+const origin = (b, t) => b.status !== "ok" ? "failed" : b.origin === "dlite" ? "dlite" : t && UNVERIFIED.has(t.state) ? "unverified" : (b.provider || "gee");
+const legacy = (t, d) => UNVERIFIED.has(t.state) && d.bands.some(b => b.origin === "provider");
+const tileBands = (t, d) => UNVERIFIED.has(t.state) ? d.bands.filter(b => b.origin === "dlite") : d.bands;
+const notAdded = (t, d) => (d.not_added && d.not_added.length) ? d.not_added
+  : legacy(t, d) ? d.bands.filter(b => b.origin === "provider").map(b => ({ name: b.name,
+    reason: "not added: the provider's copy of the D_lite bands differs from D_lite" })) : [];
+const LEGACY_TEXT = "Written by a version before schema 1.2.0: the file still holds the downloaded bands. They are not shown and not released. Run complete again to rewrite it as the D_lite original.";
+const PREVIEW_TEXT = "Previews only: 256 px JPEG, fixed stretch, made on request for the tiles on screen. Not the data.";
+const STATIC_TEXT = "Full detail (band table, reference check, Sentinel-1 statistics), previews and the W3C PROV graph are made on request by the live report: python -m strata_complete serve <this folder>.";
+const previewUrl = (t, kind) => `/preview?path=${encodeURIComponent(t.path)}&kind=${kind}`;
+const badge = s => h("span", { class: "badge s-" + s, text: s });
+const crossState = t => !t.crosscheck ? "none" : t.crosscheck.error ? "error" : t.crosscheck.identical ? "identical" : "differs";
+const crossText = t => ({ none: "no cross-check", identical: "PC identical", differs: "PC differs", error: "PC error" })[crossState(t)];
+const crossClass = t => ({ identical: "c-yes", differs: "c-no", error: "c-no" })[crossState(t)] || "c-na";
+const NS = "http://www.w3.org/2000/svg";
+function svgIcon(path, cls) {
+  const s = document.createElementNS(NS, "svg");
+  s.setAttribute("viewBox", "0 0 24 24"); s.setAttribute("fill", "none"); s.setAttribute("stroke", "currentColor");
+  s.setAttribute("stroke-width", "2"); s.setAttribute("class", cls);
+  const p = document.createElementNS(NS, "path"); p.setAttribute("d", path); s.append(p); return s;
+}
+const NOTE_PATH = "M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9zM14 3v6h6M8 13h8M8 17h5";
+
+/* --- theme --- */
+function setTheme(t) {
+  document.documentElement.dataset.theme = t;
+  $("#theme").setAttribute("aria-checked", String(t === "dark"));
+  try { localStorage.setItem("sc-theme", t); } catch (e) {}
+}
+$("#theme").addEventListener("click", () => setTheme(document.documentElement.dataset.theme === "dark" ? "light" : "dark"));
+$("#theme").setAttribute("aria-checked", String(document.documentElement.dataset.theme === "dark"));
+
+/* --- views --- */
+const VIEWS = { home: "Run overview", tiles: "Tiles", strata: "Strata", spectra: "Spectra by land cover", timing: "Timing", review: "Curator review" };
+function showView() {
+  const key = location.hash.slice(1), view = key in VIEWS ? key : "home";
+  for (const v of Object.keys(VIEWS)) $("#view-" + v).hidden = v !== view;
+  $("#viewTitle").textContent = VIEWS[view];
+  for (const a of document.querySelectorAll(".navlink")) {
+    if (a.dataset.view === view) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
+  }
+  hidePeek();
+}
+window.addEventListener("hashchange", showView);
+function goTiles(filters) {
+  for (const [id, v] of Object.entries(filters)) $(id).value = v;
+  render(); location.hash = "#tiles";
+}
+
+const RESET = { "#fState": "", "#fClass": "", "#fRegion": "", "#fSeason": "", "#fCross": "", "#fReview": "", "#fText": "" };
+
+/* --- home --- */
+/* --- funnel: input to release, the same rule as package --- */
+const LOST_SHOWN = 200;
+function funnelPanel() {
+  const box = $("#funnel"); box.replaceChildren();
+  const all = DATA.tiles, n0 = all.length || 1, s1miss = DATA.s1_not_copied || {};
+  const steps = [
+    { label: "Pairs in the output", note: "one S2 tile completed per pair", test: () => null },
+    { label: "D_lite tiles intact", note: "S2 and S1 pixel checksums match their sidecars",
+      test: t => t.dlite_checksum_ok === false ? "S2 D_lite tile: pixel checksum does not match its sidecar"
+        : !t.s1 ? (s1miss[t.name] || "S1 tile not in the output") : null },
+    { label: "Reference identical", note: "the provider's copy of B4/B3/B2 equals D_lite",
+      test: t => UNVERIFIED.has(t.state) ? `${t.state}: nothing added, original kept` : null },
+    { label: "Every band present", note: "12 S2 bands, none failed",
+      test: t => t.state !== "COMPLETE" ? `${t.state}: failed ${t.failed.join(", ")}` : null },
+    { label: "Not flagged by the curator", note: "release-ready: the rule package applies", last: true,
+      test: t => t.review && t.review.flag ? `flagged: ${t.review.note || "no note"}` : null },
+  ];
+  let left = all;
+  for (const st of steps) {
+    const lost = [];
+    left = left.filter(t => { const why = st.test(t); if (why) lost.push([t, why]); return !why; });
+    const row = h("div", { class: "fstep" + (st.last ? " last" : "") },
+      h("div", { class: "lbl" }, h("b", { text: st.label }), h("span", { text: st.note })),
+      h("div", { class: "fbar", role: "img", "aria-label": `${left.length} of ${all.length}` }, h("i", { style: `width:${100 * left.length / n0}%` })),
+      h("div", { class: "n", text: fmt(left.length) }));
+    if (lost.length) row.append(h("details", { class: "flost" },
+      h("summary", { text: `${lost.length} left out here` }),
+      h("ul", {}, lost.slice(0, LOST_SHOWN).map(([t, why]) => h("li", {},
+        h("a", { class: "mono", onclick: () => openDetail(t), text: t.name }), ` · ${why}`)),
+        lost.length > LOST_SHOWN ? h("li", { class: "muted", text: `and ${fmt(lost.length - LOST_SHOWN)} more (sc_excluded.csv of the release lists them all)` }) : null)));
+    box.append(row);
+  }
+  const old = all.filter(t => t.dlite_checksum_ok == null).length;
+  if (old) box.append(h("p", { class: "note", text: `${old} tiles written before schema 1.2.0 do not record the S2 D_lite checksum; package still checks it.` }));
+}
+
+function header() {
+  $("#meta").textContent = `${DATA.tiles.length} Sentinel-2 tiles · ${DATA.folder} · strata-complete ${DATA.tool_version} · generated ${DATA.generated} UTC`;
+  $("#navCount").textContent = DATA.tiles.length;
+  const c = DATA.counts, k = $("#kpis"); k.replaceChildren();
+  const add = (n, label, filters) => k.append(h(filters ? "button" : "div", { class: "kpi", type: filters ? "button" : null,
+    onclick: filters ? () => goTiles(filters) : null, title: filters ? "Show these tiles" : null },
+    h("b", { text: typeof n === "string" ? n : fmt(n) }), h("span", { text: label })));
+  const reset = RESET;
+  add(DATA.tiles.length, "tiles in the folder", reset);
+  add(c.COMPLETE || 0, "complete, reference identical", { ...reset, "#fState": "COMPLETE" });
+  add(c.MISALIGNED || 0, "misaligned (reference differs): nothing added", { ...reset, "#fState": "MISALIGNED" });
+  add((c.PARTIAL || 0) + (c.UNAVAILABLE || 0), "partial or reference unavailable", c.PARTIAL ? { ...reset, "#fState": "PARTIAL" } : null);
+  add(DATA.n_second_provider || 0, "completed with Planetary Computer (complete --provider pc)");
+  add(DATA.n_flagged || 0, "flagged by the curator", { ...reset, "#fReview": "flagged" });
+  if (DATA.complete_run) add(fmt(DATA.complete_run.seconds_per_tile, 1), `s per tile overall (${DATA.complete_run.workers} worker${DATA.complete_run.workers === 1 ? "" : "s"})`);
+  $("#foot").textContent = "Built only from the sidecars, the GeoTIFFs and the reports in log/: nothing recomputed. " +
+    "Previews (live report, on request): true colour B4/B3/B2 (reflectance 0–0.3) and SWIR false colour B12/B8A/B4 (0–0.5), same fixed stretch for every tile; reflectance = (DN + offset) / 10000. Spectra: median of each band, from the sidecars.";
+}
+
+function crossPanel() {
+  const p = $("#crossPanel"), x = DATA.crosscheck; p.replaceChildren();
+  p.append(h("h3", { text: "Second provider: Planetary Computer (study on the result)" }));
+  if (!x) { p.append(h("p", { class: "note", text: "Not made on this folder: python -m strata_complete crosscheck <this folder>. It is a study on the result, not part of the release." })); return; }
+  p.append(h("p", { class: "note" },
+    `${fmt(x.n_tiles_checked)} verified tiles read again from a second provider, all bands, same grid; ` +
+    `${fmt(x.n_tiles_identical)} identical in every band, ${fmt(x.n_tiles_error)} errors. ` +
+    `${x.s_per_tile_overall} s per tile with ${x.workers} workers. Report ${x.report}.`));
+  const tb = h("tbody");
+  for (const [zone, n] of Object.entries(x.by_zone || {})) {
+    tb.append(h("tr", {}, h("td", { text: zone === "same_zone" ? "Tile grid in the granule's UTM zone" : "Tile grid in another UTM zone (reprojected)" }),
+      h("td", { class: "num c-yes", text: fmt(n.identical) }), h("td", { class: "num " + (n.differs ? "c-no" : "c-na"), text: fmt(n.differs) })));
+  }
+  p.append(h("table", {}, h("thead", {}, h("tr", {}, h("th", { text: "Tiles" }), h("th", { class: "num", text: "identical" }), h("th", { class: "num", text: "differ" }))), tb));
+  p.append(h("p", { class: "note", text: "Both providers serve the same ESA product: agreement checks the download chain (scene, grid, resampling, mask, data type), not ESA's processing." }));
+}
+
+function bandsPanel() {
+  const p = $("#bandsPanel"), b = DATA.bands_check; p.replaceChildren();
+  p.append(h("h3", { text: "Band check (verified tiles)" }));
+  if (!b) { p.append(h("p", { class: "note", text: "No bands report in log/." })); return; }
+  p.append(h("p", { class: "note", text: `${fmt(b.n_tiles_checked)} verified tiles. Median reflectance percentiles across tiles; equal-neighbour share expected vs measured (nearest-neighbour footprint). Report ${b.report}.` }));
+  const tb = h("tbody");
+  for (const r of b.bands) {
+    tb.append(h("tr", {}, h("td", { text: r.band }), h("td", { class: "num", text: r.native_resolution_m }),
+      h("td", { class: "num", text: fmt(r.reflectance_p1_median, 3) }), h("td", { class: "num", text: fmt(r.reflectance_p50_median, 3) }),
+      h("td", { class: "num", text: fmt(r.reflectance_p99_median, 3) }), h("td", { class: "num", text: pct(r.share_below_0) }),
+      h("td", { class: "num", text: fmt(r.n_nonfinite) }), h("td", { class: "num", text: `${fmt(r.equal_neighbour_expected, 2)} / ${fmt(r.equal_neighbour_right, 2)}` })));
+  }
+  p.append(h("table", {}, h("thead", {}, h("tr", {}, ...["band", "m", "p1", "p50", "p99", "< 0", "nodata", "eq exp/meas"].map((t, i) => h("th", { class: i ? "num" : null, text: t })))), tb));
+}
+
+/* --- tiles --- */
+// A boxed problem: title in the error colour, then the details.
+function alertBox(title, ...lines) {
+  return h("div", { class: "alert", role: "alert" }, h("span", { class: "ico", "aria-hidden": "true", text: "!" }),
+    h("div", {}, h("b", { text: title }), ...lines.filter(Boolean).map(x => h("p", { text: x }))));
+}
+// An image left out on purpose (not a loading fault): icon and a short label.
+function errImg(label) {
+  return h("div", { class: "noimg err", role: "img", "aria-label": label },
+    h("span", { class: "ico", "aria-hidden": "true", text: "!" }), h("span", { text: label }));
+}
+// Why the S1 tile of a pair was not copied (complete logs), without the file name.
+function s1Why(t) {
+  const why = (DATA.s1_not_copied || {})[t.name];
+  return why ? why.replace(/^[^:]*\.json:\s*/, "") : null;
+}
+
+function thumb(src, alt) { return src ? h("img", { src, alt, loading: "lazy", decoding: "async" }) : h("div", { class: "noimg", role: "img", "aria-label": alt + " not available" }); }
+
+function bandStrip(t) {
+  return h("div", { class: "bands" },
+    h("div", { class: "lbl" }, h("span", { text: "S2 bands" }), h("span", { text: addedText(t) })),
+    h("div", { class: "strip", role: "img", "aria-label": "origin of each Sentinel-2 band" },
+      slots(t).map(x => h("i", { class: "o-" + x.cls, title: `${x.name}: ${x.title}` }))),
+    h("div", { class: "strip names", "aria-hidden": "true" }, slots(t).map(x => h("span", { text: x.name }))),
+    s1Strip(t));
+}
+
+const S1_NAMES = ["VV", "VH", "VV−VH"];
+function s1Strip(t) {
+  if (!t.s1) return h("div", { class: "lbl", style: "margin-top:6px" }, h("span", { text: "S1: not in the output yet (run complete)" }));
+  return h("div", { style: "margin-top:6px" },
+    h("div", { class: "lbl" }, h("span", { text: "S1 bands" }), h("span", { text: `copied from D_lite · ${t.s1.gap_days != null ? fmt(t.s1.gap_days, 1) + " d from S2" : ""}` })),
+    h("div", { class: "strip s1" }, S1_NAMES.map(n => h("i", { class: "o-dlite", title: `${n}: D_lite (copied unchanged)` }))),
+    h("div", { class: "strip s1 names", "aria-hidden": "true" }, S1_NAMES.map(n => h("span", { text: n }))));
+}
+
+function marks(t) {
+  const r = t.review, out = [];
+  if (r && r.flag) out.push(h("span", { class: "badge s-FLAGGED", text: "FLAGGED" }));
+  if (r && r.note) { const i = svgIcon(NOTE_PATH, "noteicon"); const tt = document.createElementNS(NS, "title"); tt.textContent = "Curator note: " + r.note; i.append(tt); out.push(i); }
+  return h("span", { class: "marks" }, out);
+}
+
+function card(t) {
+  const el = h("button", { class: "card", type: "button", onclick: () => { hidePeek(); openDetail(t); } },
+    previews ? h("div", { class: "thumbs" }, thumb(previewUrl(t, "rgb"), "Sentinel-2 true colour preview"), thumb(t.s1 ? previewUrl(t, "s1") : null, "Sentinel-1 VV, VH, VV-VH preview")) : null,
+    previews ? h("div", { class: "thumbcap", "aria-hidden": "true" }, h("span", { text: "Sentinel-2" }), h("span", { text: "Sentinel-1" })) : null,
+    h("div", { class: "row" }, h("span", { class: "title", text: t.class, title: t.class }), h("span", { class: "marks" }, marks(t), badge(t.state))),
+    h("div", { class: "row muted" }, h("span", { text: `${t.region} · ${t.season}` }), h("span", { class: crossClass(t), text: crossText(t) })),
+    bandStrip(t));
+  if (matchMedia("(hover: hover)").matches) {
+    el.addEventListener("mouseenter", () => schedulePeek(t, el));
+    el.addEventListener("mouseleave", hidePeek);
+  }
+  return el;
+}
+
+/* --- hover summary --- */
+let peekTimer = null;
+function schedulePeek(t, el) { clearTimeout(peekTimer); peekTimer = setTimeout(() => showPeek(t, el), 350); }
+function hidePeek() { clearTimeout(peekTimer); const p = $("#peek"); if (p) p.hidden = true; }
+function showPeek(t, el) {
+  const p = $("#peek"), r = t.review, fb = t.fallback;
+  p.replaceChildren(
+    h("div", { style: "display:flex;justify-content:space-between;gap:8px;margin-bottom:6px" }, h("b", { text: t.class }), badge(t.state)),
+    spectrumSvg(t, true),
+    kv([["Product", h("span", { class: "mono", text: t.product_id || "–" })],
+      ["Baseline", `${t.baseline || "–"} · offset ${t.offsets.join(", ") || "–"}`],
+      ["Paired S1", t.sar.pass ? `${t.sar.pass.toLowerCase()}, track ${t.sar.track}` + (t.s1 && t.s1.gap_days != null ? `, ${fmt(t.s1.gap_days, 1)} d from S2` : "") : "–"],
+      ["Cross-check", h("span", { class: crossClass(t), text: crossText(t) })],
+      t.provider !== "gee" ? ["Provider", "Planetary Computer"] : null,
+      r && r.note ? ["Note", r.note] : null].filter(Boolean)),
+    h("div", { class: "note", text: "Click for the full detail." }));
+  p.hidden = false;
+  const box = el.getBoundingClientRect(), w = p.offsetWidth, hgt = p.offsetHeight;
+  let x = box.right + 10; if (x + w > innerWidth - 8) x = box.left - w - 10; if (x < 8) x = 8;
+  let y = box.top; if (y + hgt > innerHeight - 8) y = innerHeight - hgt - 8; if (y < 8) y = 8;
+  p.style.left = x + "px"; p.style.top = y + "px";
+}
+window.addEventListener("scroll", hidePeek, { passive: true });
+
+function spectrumSvg(t, compact = false, dliteOnly = false) {
+  const W = compact ? 300 : 440, H = compact ? 130 : 170, L = 34, R = 8, T = 8, B = 24, order = DATA.bands_order, wl = DATA.wavelength_nm;
+  const x0 = 400, x1 = 2250;
+  // Bands drawn: those in the tile and usable (from D_lite or added); before = D_lite only.
+  const use = UNVERIFIED.has(t.state) || dliteOnly ? "d" : "dgp";
+  const pts = order.map((b, i) => [wl[b], t.spectrum[i], b, CODE[t.codes[i]]]).filter((p, i) => p[1] != null && use.includes(t.codes[i]));
+  // One scale for before and after: the top of the bands the finished tile has.
+  const all = UNVERIFIED.has(t.state) ? "d" : "dgp";
+  const scale = t.spectrum.filter((v, i) => v != null && all.includes(t.codes[i]));
+  const top = Math.max(0.3, Math.ceil(Math.max(...scale, 0) * 10) / 10);
+  const X = v => L + (v - x0) / (x1 - x0) * (W - L - R), Y = v => T + (1 - v / top) * (H - T - B);
+  const svg = document.createElementNS(NS, "svg");
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`); svg.setAttribute("width", "100%"); svg.setAttribute("role", "img");
+  svg.setAttribute("aria-label", "median reflectance per band");
+  const el = (n, a) => { const e = document.createElementNS(NS, n); for (const k in a) e.setAttribute(k, a[k]); svg.append(e); return e; };
+  for (let g = 0; g <= top + 1e-9; g += 0.1) {
+    el("line", { x1: L, x2: W - R, y1: Y(g), y2: Y(g), stroke: "var(--line)" });
+    el("text", { x: L - 5, y: Y(g) + 4, "text-anchor": "end" }).textContent = g.toFixed(1);
+  }
+  for (const w of [500, 1000, 1500, 2000]) el("text", { x: X(w), y: H - 6, "text-anchor": "middle" }).textContent = w;
+  el("text", { x: W - R, y: H - 6, "text-anchor": "end" }).textContent = "nm";
+  el("polyline", { points: pts.map(p => `${X(p[0])},${Y(p[1])}`).join(" "), fill: "none", stroke: "var(--muted)", "stroke-width": 1.5 });
+  for (const [w, v, b, cls] of pts) {
+    const c = el("circle", { cx: X(w), cy: Y(v), r: compact ? 3.5 : 4.5, fill: `var(--${cls})` });
+    const tt = document.createElementNS(NS, "title"); tt.textContent = `${b} (${w} nm): ${v.toFixed(4)} · ${ORIGIN_LABEL[cls]}`; c.append(tt);
+  }
+  return svg;
+}
+
+function kv(pairs) {
+  return h("dl", { class: "kv" }, pairs.flatMap(([k, v]) => [h("dt", { text: k }), h("dd", {}, v == null || v === "" ? "–" : v)]));
+}
+
+/* --- tile detail --- */
+const VERDICT_TEXT = {
+  COMPLETE: "every band present; the provider's copy of the D_lite bands is identical",
+  MISALIGNED: "the provider's copy of the D_lite bands differs: nothing added, the tile is the D_lite original",
+  PARTIAL: "some bands could not be obtained",
+  UNAVAILABLE: "the provider did not return the D_lite bands: nothing verified, nothing added",
+};
+const fig = (src, alt, cap) => h("figure", { class: "big" }, thumb(src, alt), h("figcaption", { text: cap }));
+const tabpanel = (id, ...kids) => h("div", { class: "tabpanel", id: "tp-" + id, role: "tabpanel" }, ...kids);
+const staticNote = () => h("p", { class: "static-note", text: STATIC_TEXT });
+const previewNote = () => h("p", { class: "note", text: PREVIEW_TEXT });
+
+function overviewTab(t, d) {
+  const cc = t.crosscheck, fb = t.fallback, s1 = t.s1;
+  return tabpanel("overview",
+    d ? h("div", { class: "figs" },
+      fig(previewUrl(t, "rgb"), "Sentinel-2 true colour preview", "Sentinel-2 true colour B4/B3/B2 (from D_lite)"),
+      s1 || !s1Why(t)
+        ? fig(s1 ? previewUrl(t, "s1") : null, "Sentinel-1 VV, VH, VV-VH preview", "Sentinel-1 VV / VH / VV−VH in dB as R / G / B (from D_lite, unchanged)")
+        : h("figure", { class: "big" }, errImg("Sentinel-1 not copied"),
+            h("figcaption", { text: `Sentinel-1 not copied: ${s1Why(t)}. The pair is not released.` }))) : null,
+    d ? previewNote() : staticNote(),
+    h("div", { class: "two pairrow" },
+      h("div", {}, h("h2", { text: "Pair" }), kv([
+        ["Verdict", h("span", {}, badge(t.state), " ", VERDICT_TEXT[t.state] || "")],
+        ["Land cover", `${t.class} (purity ${fmt(t.purity * 100, 1)} %)`],
+        ["Region · season", `${t.region} · ${t.season}` + (d ? ` (${d.hemisphere})` : "")],
+        ["Sentinel-2", h("span", { class: "mono", text: t.product_id || "–" })],
+        ["Sentinel-1", s1 ? `${s1.acquired || "–"} · ${t.sar.pass ? t.sar.pass.toLowerCase() + ", track " + t.sar.track : "–"}` : s1Why(t) ? h("span", { class: "c-no", text: `not copied: ${s1Why(t)}` }) : "not in the output yet (run complete)"],
+        ["S1–S2 gap", s1 && s1.gap_days != null ? `${fmt(s1.gap_days, 2)} days` : null],
+        ["Bands", `S2: ${addedText(t)} · S1: ${s1 ? "3 copied" : "–"}`],
+        ["Cross-check", h("span", { class: crossClass(t), text: cc ? (cc.error ? "error" : cc.identical ? "identical in every band" : `differs in ${cc.differ.length} bands`) : crossText(t) })],
+        ["Provider", t.provider === "gee" ? "Google Earth Engine" : "Planetary Computer (complete --provider pc, for a tile GEE could not finish)"],
+        fb ? ["Fallback (older tool)", fb.used ? `used (${fb.provider})` : `tried, not used (${fb.provider})`] : null,
+        d ? ["Grid", `${d.crs} · ${d.size.join(" × ")} px`] : null].filter(Boolean))),
+      reviewBlock(t) || h("div", {}, h("h2", { text: "Curator review" }), h("p", { class: "note", text: "No mark. Marks are made in the live report (serve)." }))));
+}
+
+function spectrumBlock(t) {
+  return UNVERIFIED.has(t.state)
+    ? h("div", {}, h("h2", { text: "Median spectrum" }),
+        h("div", { class: "spec-cap", text: `D_lite as published (${nCode(t, "d")} bands): unchanged, nothing added` }), spectrumSvg(t, false, true),
+        h("p", { class: "note", text: "Before and after are the same tile: the reference check failed, so no band was added." }))
+    : h("div", {}, h("h2", { text: "Median spectrum: before and after" }),
+        h("div", { class: "spec-cap", text: `Before · D_lite as published (${nCode(t, "d")} bands)` }), spectrumSvg(t, false, true),
+        h("div", { class: "spec-cap", text: `After · STRATA-S12-SC (${nCode(t, "dgp")} bands)` }), spectrumSvg(t),
+        h("p", { class: "note", text: "Median reflectance of the finite pixels per band, same scale in both; dot colour = where the band came from." }));
+}
+
+function s2Tab(t, d) {
+  const fb = t.fallback, cc = t.crosscheck;
+  const head = h("div", { class: "three" },
+    d ? fig(previewUrl(t, "rgb"), "true colour preview", "True colour B4/B3/B2 (from D_lite)") : null,
+    d ? (UNVERIFIED.has(t.state)
+      ? h("figure", { class: "big" }, errImg("No SWIR: bands not added"),
+          h("figcaption", { text: "No SWIR false colour: B12 and B8A were not added (reference check failed)." }))
+      : fig(previewUrl(t, "swir"), "SWIR false colour preview", "SWIR false colour B12/B8A/B4 (B12, B8A added)")) : null,
+    spectrumBlock(t));
+  const crossBlock = h("div", {}, h("h2", { text: "Cross-check with Planetary Computer" }),
+    cc ? kv([["Result", cc.error ? `error: ${cc.error}` : cc.identical ? "identical in every band" : `differs in ${cc.differ.join(", ")} (up to ${pct(cc.share_differ_max)} of pixels)`],
+      ["PC baseline", cc.baseline], ["Seconds", cc.seconds],
+      d ? ["Why it can differ", d.tile_zone !== d.granule_zone ? "tile grid in another UTM zone than the granule: both providers reproject" : null] : null].filter(Boolean))
+      : h("p", { class: "note", text: t.state === "COMPLETE" ? "Not in the latest crosscheck report." : "Only verified (complete) tiles are cross-checked." }));
+  const fbBlock = h("div", {}, h("h2", { text: "Provider" }),
+    kv([["Bands added and reference check", t.provider === "gee" ? "Google Earth Engine" : "Planetary Computer"],
+      ["Why", t.provider === "gee" ? "the provider of D_lite" : "GEE could not finish this tile; Planetary Computer gave it complete, reference identical to D_lite"]]
+      .concat(fb ? [["Fallback (older tool)", `${fb.provider}, ${fb.used ? "used" : "not used"}`]] : [])
+      .concat(d && d.fallback ? [["Fallback reason", d.fallback.reason], ["Fallback outcome", d.fallback.outcome]] : [])));
+  if (!d) {
+    return tabpanel("s2", head, h("div", { class: "two" },
+      h("div", {}, h("h2", { text: "Scene and radiometry" }), kv([
+        ["ESA product", h("span", { class: "mono", text: t.product_id || "–" })],
+        ["Baseline · offset", `${t.baseline || "–"} · ${t.offsets.join(", ") || "–"}`]])), crossBlock),
+      h("div", { class: "two" }, fbBlock, h("div", {})), staticNote());
+  }
+  const refRows = d.reference.map(r => h("tr", {}, h("td", { text: r.band }),
+    h("td", { class: r.identical ? "c-yes" : "c-no", text: r.available ? (r.identical ? "identical" : "differs") : "not returned" }),
+    h("td", { class: "num", text: `${fmt(r.n_equal)} / ${fmt(r.n_pixels)}` }), h("td", { class: "num", text: fmt(r.max_abs_diff) })));
+  const bandRows = tileBands(t, d).map(b => h("tr", {},
+    h("td", {}, h("i", { class: "o-" + origin(b, t), style: "display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px" }), b.name),
+    h("td", { text: origin(b, t) === "unverified" ? "not usable" : ORIGIN_LABEL[origin(b, t)] }), h("td", { class: "num", text: b.res }),
+    h("td", { text: b.group || "–" }), h("td", { class: "num", text: b.attempts }),
+    h("td", { class: "num", text: fmt(b.min) }), h("td", { class: "num", text: fmt(b.median) }), h("td", { class: "num", text: fmt(b.max) }),
+    h("td", { class: "num", text: fmt(b.nonfinite) }), h("td", { class: "mono", text: b.hash || b.error || "–" })));
+  const timing = Object.entries(d.timings).map(([k, v]) => `${k} ${v.toFixed(1)} s`).join(" · ");
+  return tabpanel("s2", head, previewNote(),
+    h("div", { class: "two" },
+      h("div", {}, h("h2", { text: "Scene and radiometry" }), kv([
+        ["ESA product", h("span", { class: "mono", text: t.product_id || "–" })],
+        ["Baseline · offset", `${t.baseline || "–"} · ${t.offsets.join(", ") || "–"}`],
+        ["Orbit", d.s2_orbit],
+        ["UTM zone", `tile ${d.tile_zone ?? "–"} · granule ${d.granule_zone ?? "–"}`],
+        ["Source", h("span", { class: "mono", text: `${d.dlite.file} (doi:${d.dlite.doi})` })],
+        ["Radiometry note", d.radiometry_error]])),
+      h("div", {}, h("h2", { text: "Reference check against D_lite" }),
+        h("p", { class: "note", text: "The provider's own copy of the published bands, compared pixel by pixel. Identical = same scene on the same grid, so the added bands are on that grid too." }),
+        h("table", {}, h("thead", {}, h("tr", {}, h("th", { text: "band" }), h("th", { text: "result" }), h("th", { class: "num", text: "equal pixels" }), h("th", { class: "num", text: "max |diff|" }))), h("tbody", {}, refRows)))),
+    h("div", { class: "two" }, crossBlock, fbBlock),
+    h("div", {}, h("h2", { text: "Bands" }), h("div", { class: "panel", style: "padding:0;box-shadow:none" }, h("table", {},
+      h("thead", {}, h("tr", {}, ...["band", "from", "m", "request", "tries", "min DN", "median DN", "max DN", "nodata", "xxHash64 / error"].map((x, i) => h("th", { class: [2, 4, 5, 6, 7, 8].includes(i) ? "num" : null, text: x })))),
+      h("tbody", {}, bandRows, notAdded(t, d).map(n => h("tr", {},
+        h("td", {}, h("i", { class: "o-unverified", style: "display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px" }), n.name),
+        h("td", { text: "not added" }), h("td", { class: "num", text: "–" }), h("td", { colspan: "6", style: "white-space:normal", text: n.reason.replace(/^not added: /, "") }),
+        h("td", { class: "mono", text: "–" }))))))),
+    h("p", { class: "note", text: `Timings: ${timing}. Written ${t.created} by strata-complete ${d.tool.version}; tile checksum ${d.checksum} (xxHash64).` }));
+}
+
+function s1Tab(t, d) {
+  const s = d ? d.s1 : t.s1;
+  const why = s1Why(t);
+  if (!s) return tabpanel("s1", why
+    ? alertBox("Sentinel-1 not copied", `${why.charAt(0).toUpperCase()}${why.slice(1)}.`, "The S1 tile in D_lite does not match its own sidecar, so it is not copied and the pair is not released.")
+    : h("p", { class: "note", text: "The Sentinel-1 tile of this pair is not in the output folder yet: run complete again (it copies the S1 tile of every pair after checking its checksum)." }));
+  if (!d) return tabpanel("s1", kv([["S1 tile", h("span", { class: "mono", text: s.name })], ["Acquired", s.acquired],
+    ["Orbit", t.sar.pass ? `${t.sar.pass}, relative orbit (track) ${t.sar.track}` : null], ["Gap to S2", s.gap_days != null ? `${fmt(s.gap_days, 2)} days` : null]]), staticNote());
+  return tabpanel("s1",
+    h("div", { class: "figside" },
+      fig(previewUrl(t, "s1"), "Sentinel-1 VV, VH, VV-VH preview", "VV / VH / VV−VH in dB as R / G / B; stretch VV −25…0, VH −30…−5, VV−VH −10…10 dB"),
+      h("div", {}, h("h2", { text: "Scene and geometry" }), kv([
+        ["S1 tile", h("span", { class: "mono", text: s.name })],
+        ["GEE scene", h("span", { class: "mono", text: s.image_id })],
+        ["Acquired", s.acquired], ["Platform", s.spacecraft],
+        ["Mode", d.sar.mode], ["Orbit", d.sar.pass ? `${d.sar.pass}, relative orbit (track) ${d.sar.track}` : null],
+        ["Gap to S2", s.gap_days != null ? `${fmt(s.gap_days, 2)} days` : null],
+        ["Checksum", h("span", { class: "mono", text: `${s.checksum} (xxHash64; matches its D_lite sidecar)` })]]),
+        h("p", { class: "note", text: "Copied unchanged from D_lite. No bands are added to Sentinel-1: D_lite scenes are IW dual-polarisation, and VV and VH are the only polarisations those scenes have. Orbit and track are read from GEE by complete; D_lite does not carry them." }))),
+    previewNote(),
+    h("div", {}, h("h2", { text: "Bands (dB)" }), h("table", {},
+      h("thead", {}, h("tr", {}, ...["band", "min", "median", "max", "nodata"].map((x, i) => h("th", { class: i ? "num" : null, text: x })))),
+      h("tbody", {}, s.bands.map(b => h("tr", {}, h("td", { text: b.name.replace("VV_VH_DIFF", "VV−VH (derived, in D_lite)") }),
+        h("td", { class: "num", text: fmt(b.min, 2) }), h("td", { class: "num", text: fmt(b.median, 2) }), h("td", { class: "num", text: fmt(b.max, 2) }), h("td", { class: "num", text: fmt(b.nonfinite) })))))));
+}
+
+async function openDetail(t, tab = "overview") {
+  const dlg = $("#detail"); dlg.replaceChildren(h("div", { class: "dbody" }, h("p", { class: "note", text: "Loading the tile…" })));
+  if (!dlg.open) { document.documentElement.style.overflow = "hidden"; dlg.showModal(); }
+  let d = null;
+  if (LIVE) {
+    try {
+      const res = await fetch(`/tile?path=${encodeURIComponent(t.path)}`, { cache: "no-store" });
+      if (res.ok) d = await res.json();
+    } catch (e) { /* shown as the short view */ }
+  }
+  dlg.replaceChildren();
+  const provPanel = tabpanel("prov", d ? provView(t, d) : staticNote(),
+    d && t.prov ? h("p", { class: "note" }, h("a", { href: "/prov/" + t.path.replace(/\.tif$/, ".prov.json"), target: "_blank", rel: "noopener", text: "Open the PROV-JSON file" })) : null);
+  const tabs = [["overview", "Overview", overviewTab(t, d)], ["s2", "Sentinel-2", s2Tab(t, d)], ["s1", "Sentinel-1", s1Tab(t, d)], ["prov", "W3C PROV", provPanel]];
+  const body = h("div", { class: "dbody" }, d && legacy(t, d) ? h("p", { class: "legacy", text: LEGACY_TEXT }) : null, tabs.map(x => x[2]));
+  const select = id => {
+    for (const [k, , panel] of tabs) panel.hidden = k !== id;
+    for (const b of dlg.querySelectorAll(".tab")) b.setAttribute("aria-selected", String(b.dataset.tab === id));
+    body.scrollTop = 0;
+  };
+  dlg.append(h("div", { class: "dhead" },
+    h("div", { class: "r1" },
+      h("div", {}, h("h3", { id: "dTitle", text: t.name }), h("div", { class: "muted mono", text: t.path })),
+      h("span", { class: "marks" }, marks(t), badge(t.state)),
+      h("button", { type: "button", class: "btn close", onclick: () => dlg.close(), text: "Close" })),
+    h("div", { class: "tabs", role: "tablist" }, tabs.map(([k, label]) =>
+      h("button", { class: "tab", type: "button", role: "tab", "data-tab": k, onclick: () => select(k), text: label })))), body);
+  select(tab);
+}
+$("#detail").addEventListener("close", () => { document.documentElement.style.overflow = ""; $("#detail").replaceChildren(); });
+
+/* --- W3C PROV graph of one tile --- */
+const PROV_REL = { used: ["prov:activity", "prov:entity"], wasGeneratedBy: ["prov:entity", "prov:activity"],
+  wasAssociatedWith: ["prov:activity", "prov:agent"], wasAttributedTo: ["prov:entity", "prov:agent"],
+  wasDerivedFrom: ["prov:generatedEntity", "prov:usedEntity"], hadMember: ["prov:collection", "prov:entity"] };
+const val = v => v == null ? null : (typeof v === "object" && "$" in v ? v.$ : v);
+function provRelations(doc) {
+  const out = [];
+  for (const [kind, [a, b]] of Object.entries(PROV_REL)) for (const r of Object.values(doc[kind] || {})) out.push({ kind, from: r[a], to: r[b] });
+  return out;
+}
+function provView(t, d) {
+  const doc = d.prov_doc;
+  if (!doc) return h("p", { class: "note", text: "No W3C PROV document for this tile yet: run `python -m strata_complete prov`." });
+  const rels = provRelations(doc), ent = doc.entity || {}, act = doc.activity || {}, agt = doc.agent || {};
+  const isBand = id => /^band /.test(val(ent[id]?.["prov:label"]) || "");
+  const members = new Set(rels.filter(r => r.kind === "hadMember" && isBand(r.to)).map(r => r.to));
+  const collection = rels.find(r => r.kind === "hadMember" && isBand(r.to))?.from;
+  const derived = id => rels.find(r => r.kind === "wasDerivedFrom" && r.from === id)?.to;
+  const attributed = id => rels.find(r => r.kind === "wasAttributedTo" && r.from === id)?.to;
+  const groups = new Map();
+  for (const id of members) {
+    const key = `${derived(id) || "-"}|${attributed(id) || "-"}`;
+    (groups.get(key) || groups.set(key, { from: derived(id), agent: attributed(id), bands: [] }).get(key)).bands.push(id);
+  }
+  const bandName = id => (val(ent[id]?.["prov:label"]) || id).replace(/^band /, "");
+  const inputs = Object.keys(ent).filter(id => !id.startsWith("sc:"));
+  const outputs = [collection, ...Object.keys(ent).filter(id => id.startsWith("sc:") && !members.has(id) && id !== collection)].filter(Boolean);
+  const W = 1000, colX = [130, 400, 640, 870], rowH = 74, top = 112;
+  const nodes = new Map(), place = (id, kind, x, y, title, sub, full) => nodes.set(id, { id, kind, x, y, title, sub, full });
+  const short = (s, n = 30) => s.length > n ? s.slice(0, n - 1) + "…" : s;
+  Object.keys(agt).forEach((id, i, all) => place(id, "agent", W / (all.length + 1) * (i + 1), 40, val(agt[id]["prov:label"]) || id, short(id), id));
+  inputs.forEach((id, i) => place(id, "entity", colX[0], top + i * rowH + 20, val(ent[id]["prov:label"]) || "entity", short(id), id));
+  Object.keys(act).forEach((id, i) => place(id, "activity", colX[1], top + i * rowH + 20, val(act[id]["prov:label"]) || "activity", short(id), id));
+  outputs.forEach((id, i) => place(id, "entity", colX[2], top + i * rowH + 20, val(ent[id]["prov:label"]) || "entity", short(id), id));
+  [...groups.values()].forEach((g, i) => {
+    const gid = "group:" + i; g.id = gid;
+    place(gid, "entity", colX[3], top + i * rowH + 20, `bands ${g.bands.map(bandName).join(" ")}`, `${g.bands.length} band${g.bands.length > 1 ? "s" : ""}`, g.bands.join("\n"));
+  });
+  const edges = [];
+  for (const r of rels) {
+    if (members.has(r.from) || members.has(r.to)) continue;
+    if (nodes.has(r.from) && nodes.has(r.to)) edges.push(r);
+  }
+  for (const g of groups.values()) {
+    if (collection) edges.push({ kind: "hadMember", from: collection, to: g.id });
+    if (g.from && nodes.has(g.from)) edges.push({ kind: "wasDerivedFrom", from: g.id, to: g.from });
+    if (g.agent && nodes.has(g.agent)) edges.push({ kind: "wasAttributedTo", from: g.id, to: g.agent });
+  }
+  const H = top + Math.max(inputs.length, Object.keys(act).length, outputs.length, groups.size) * rowH + 20;
+  const svg = document.createElementNS(NS, "svg");
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`); svg.setAttribute("width", "100%"); svg.setAttribute("role", "img");
+  svg.setAttribute("aria-label", "W3C PROV graph of this tile");
+  const el = (n, a, parent = svg) => { const e = document.createElementNS(NS, n); for (const k in a) e.setAttribute(k, a[k]); parent.append(e); return e; };
+  const defs = el("defs", {});
+  const mk = el("marker", { id: "arr", viewBox: "0 0 10 10", refX: 9, refY: 5, markerWidth: 7, markerHeight: 7, orient: "auto-start-reverse" }, defs);
+  el("path", { d: "M0,0 L10,5 L0,10 z", fill: "var(--muted)" }, mk);
+  const NW = 196, NH = 44, colour = { agent: "var(--prov-agent)", activity: "var(--prov-activity)", entity: "var(--prov-entity)" };
+  const edgeColour = { used: "var(--bad)", wasGeneratedBy: "var(--ok)", wasAssociatedWith: "var(--warn)", wasAttributedTo: "var(--warn)", wasDerivedFrom: "var(--muted)", hadMember: "var(--muted)" };
+  for (const e of edges) {
+    const a = nodes.get(e.from), b = nodes.get(e.to);
+    const ax = a.x + (b.x > a.x + 5 ? NW / 2 : b.x < a.x - 5 ? -NW / 2 : 0), ay = a.y + (Math.abs(b.x - a.x) <= 5 ? (b.y > a.y ? NH / 2 : -NH / 2) : 0);
+    const bx = b.x + (a.x > b.x + 5 ? NW / 2 : a.x < b.x - 5 ? -NW / 2 : 0), by = b.y + (b.kind === "agent" ? NH / 2 : Math.abs(b.x - a.x) <= 5 ? (a.y > b.y ? NH / 2 : -NH / 2) : 0);
+    const mx = (ax + bx) / 2;
+    const p = el("path", { d: `M${ax},${ay} C${mx},${ay} ${mx},${by} ${bx},${by}`, fill: "none", stroke: edgeColour[e.kind], "stroke-width": 1.4, "marker-end": "url(#arr)", opacity: 0.85 });
+    const tt = document.createElementNS(NS, "title"); tt.textContent = `${e.from} ${e.kind} ${e.to}`; p.append(tt);
+  }
+  for (const n of nodes.values()) {
+    const g = el("g", {});
+    const x = n.x - NW / 2, y = n.y - NH / 2;
+    if (n.kind === "entity") el("rect", { x, y, width: NW, height: NH, rx: NH / 2, fill: colour.entity, stroke: "var(--line)" }, g);
+    else if (n.kind === "activity") el("rect", { x, y, width: NW, height: NH, rx: 4, fill: colour.activity, stroke: "var(--line)" }, g);
+    else el("path", { d: `M${x},${y + 10} L${n.x},${y} L${x + NW},${y + 10} L${x + NW},${y + NH} L${x},${y + NH} z`, fill: colour.agent, stroke: "var(--line)" }, g);
+    el("text", { x: n.x, y: n.y - 3, "text-anchor": "middle", class: "pn-title" }, g).textContent = short(n.title, 34);
+    el("text", { x: n.x, y: n.y + 13, "text-anchor": "middle", class: "pn-sub" }, g).textContent = n.sub;
+    const tt = document.createElementNS(NS, "title"); tt.textContent = n.full; g.append(tt);
+  }
+  const legend = h("div", { class: "legend", style: "margin-top:8px" },
+    h("span", {}, h("i", { style: "background:var(--prov-entity);border-radius:6px" }), "entity"),
+    h("span", {}, h("i", { style: "background:var(--prov-activity)" }), "activity"),
+    h("span", {}, h("i", { style: "background:var(--prov-agent)" }), "agent"),
+    ...Object.entries(edgeColour).map(([k, c]) => h("span", {}, h("i", { style: `background:${c};height:3px;vertical-align:3px` }), k)));
+  const relRows = rels.map(r => h("tr", {}, h("td", { class: "mono", text: r.from }), h("td", { text: r.kind }), h("td", { class: "mono", text: r.to })));
+  const raw = JSON.stringify(doc, null, 1);
+  const blob = URL.createObjectURL(new Blob([raw], { type: "application/json" }));
+  return [
+    h("p", { class: "note", text: "The tile's provenance in the W3C standard (PROV-DM, written as PROV-JSON): what was used, which activity generated what, and who is responsible. Bands with the same source and provider are drawn as one node; hover a node or an arrow for its full identifier." }),
+    h("div", { class: "panel", style: "padding:8px" }, svg, legend),
+    h("details", {}, h("summary", { text: `All ${rels.length} relations` }),
+      h("table", {}, h("thead", {}, h("tr", {}, h("th", { text: "from" }), h("th", { text: "relation" }), h("th", { text: "to" }))), h("tbody", {}, relRows))),
+    h("details", {}, h("summary", { text: "Raw PROV-JSON" }),
+      h("p", {}, h("a", { href: blob, download: t.name.replace(/\.tif$/, ".prov.json"), text: "Download the document" })),
+      h("pre", { class: "mono", style: "max-height:320px;overflow:auto;white-space:pre;background:var(--panel-2);padding:10px;border-radius:8px", text: raw })),
+  ];
+}
+
+function reviewBlock(t) {
+  const r = t.review;
+  if (!LIVE || !(DATA.writable || DATA.notes)) {
+    return r ? h("div", {}, h("h2", { text: "Curator review" }), kv([["Flagged", r.flag ? "yes" : "no"], ["Note", r.note], ["When", r.at]])) : null;
+  }
+  const flag = h("input", { type: "checkbox", id: "rvFlag" }); flag.checked = !!(r && r.flag);
+  const note = h("textarea", { id: "rvNote", class: "rvnote", placeholder: "Add your note" });
+  note.value = r ? r.note : "";
+  const msg = h("span", { class: "note", text: r ? `Last saved ${r.at}` : "" });
+  // The flag is saved as soon as it changes (with the note as last saved); the note
+  // waits for Save, so a half-written note is never stored by ticking the box.
+  const send = async (noteText) => {
+    save.disabled = flag.disabled = true; msg.textContent = "Saving…";
+    try {
+      const res = await fetch("/review", { method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: t.name, flag: flag.checked, note: noteText }) });
+      const out = await res.json();
+      if (!res.ok) throw new Error(out.error || res.status);
+      t.review = out.review;
+      msg.textContent = out.saved ? `Saved ${out.review.at}` : `No changes to save (last saved ${out.review.at || "never"})`;
+      if (out.saved) await refresh(true);
+    } catch (e) { msg.textContent = "Not saved: " + e.message; }
+    save.disabled = flag.disabled = false;
+  };
+  const save = h("button", { type: "button", class: "btn primary", text: "Save note", onclick: () => send(note.value) });
+  flag.addEventListener("change", () => send(t.review ? t.review.note : ""));
+  return h("div", { class: "review" }, h("h2", { text: DATA.notes ? "Notes (saved with the release)" : "Curator review" }),
+    h("label", { style: "display:flex;gap:8px;align-items:center;margin-bottom:12px" }, flag,
+      DATA.notes ? "Flag this pair for users of the data" : "Flag this tile (exclude or check before use)"),
+    h("label", { for: "rvNote", class: "fieldlabel", text: "Note" }),
+    note, h("div", { class: "livebar" }, save, msg),
+    h("p", { class: "note", text: "Optional: why the tile is flagged, or what to check. Saved to review.json; the tile itself is never changed." }));
+}
+
+/* --- filters --- */
+function fillOptions() {
+  const uniq = k => [...new Set(DATA.tiles.map(t => t[k]))].sort();
+  for (const [id, key, all] of [["#fState", "state", "All verdicts"], ["#fClass", "class", "All classes"], ["#fRegion", "region", "All regions"], ["#fSeason", "season", "All seasons"]]) {
+    const sel = $(id), keep = sel.value;
+    sel.replaceChildren(h("option", { value: "", text: all }), ...uniq(key).map(v => h("option", { value: v, text: v })));
+    sel.value = uniq(key).includes(keep) ? keep : "";
+  }
+}
+
+function filters() {
+  fillOptions();
+  for (const id of ["#fState", "#fClass", "#fRegion", "#fSeason", "#fCross", "#fReview", "#fText"]) $(id).addEventListener("input", () => render());
+}
+
+function reviewIntro() {
+  const p = document.getElementById("reviewIntro");
+  if (p && DATA.notes) p.textContent = "Notes on the pairs of this release, kept next to the archives in sc_notes.jsonld (W3C Web Annotation). They never change the data; run notes seal before publishing.";
+}
+function reviewState(t) { return t.review && t.review.flag ? "flagged" : "clean"; }
+
+let page = 0, previews = false;
+function render(resetPage = true) {
+  if (resetPage) page = 0;
+  const s = $("#fState").value, c = $("#fClass").value, r = $("#fRegion").value, se = $("#fSeason").value, x = $("#fCross").value, v = $("#fReview").value, q = $("#fText").value.trim().toLowerCase();
+  const shown = DATA.tiles.filter(t => (!s || t.state === s) && (!c || t.class === c) && (!r || t.region === r) && (!se || t.season === se) &&
+    (!x || crossState(t) === x || (x === "differs" && crossState(t) === "error")) &&
+    (!v || (v === "note" ? !!(t.review && t.review.note) : reviewState(t) === v)) &&
+    (!q || t.name.toLowerCase().includes(q) || (t.product_id || "").toLowerCase().includes(q)));
+  const size = DATA.page_size || 24, pages = Math.max(1, Math.ceil(shown.length / size));
+  page = Math.min(page, pages - 1);
+  // One page in the DOM at a time: changing page drops the cards (and their previews) of the last one.
+  $("#grid").replaceChildren(...shown.slice(page * size, (page + 1) * size).map(card));
+  $("#count").textContent = `${fmt(shown.length)} of ${fmt(DATA.tiles.length)} tiles`;
+  for (const id of ["#pagerTop", "#pagerBottom"]) {
+    const go = p => { page = p; render(false); if (id === "#pagerBottom") $("#pagerTop").scrollIntoView({ block: "nearest" }); };
+    $(id).replaceChildren(
+      h("button", { type: "button", class: "btn", text: "← Previous", disabled: page === 0 ? "" : null, onclick: () => go(page - 1) }),
+      h("span", { class: "count", text: `page ${fmt(page + 1)} of ${fmt(pages)} · ${size} per page` }),
+      h("button", { type: "button", class: "btn", text: "Next →", disabled: page >= pages - 1 ? "" : null, onclick: () => go(page + 1) }),
+      id === "#pagerTop" ? h("button", { type: "button", class: "btn", "aria-pressed": String(previews), disabled: LIVE ? null : "",
+        title: LIVE ? "Make the previews of this page" : "Previews are made by the live report (serve)",
+        text: previews ? "Hide previews" : "Show previews", onclick: () => { previews = !previews; render(false); } }) : "");
+  }
+  $("#previewNote").textContent = LIVE ? (previews ? PREVIEW_TEXT : "Previews are made on request: Show previews (one page at a time).")
+    : "Previews are made on request by the live report: python -m strata_complete serve <this folder>.";
+}
+
+/* --- strata --- */
+let strataBy = "region";
+function strataView() {
+  const box = $("#strataTable"), classes = [...new Set(DATA.tiles.map(t => t.class))].sort();
+  const cols = [...new Set(DATA.tiles.map(t => t[strataBy]))].sort();
+  const cell = (c, k) => {
+    const ts = DATA.tiles.filter(t => (c == null || t.class === c) && (k == null || t[strataBy] === k));
+    const ok = ts.filter(t => t.state === "COMPLETE").length;
+    if (!ts.length) return h("td", { class: "num c-na", text: "–" });
+    const share = ok / ts.length, filt = { ...RESET };
+    if (c != null) filt["#fClass"] = c;
+    if (k != null) filt[strataBy === "region" ? "#fRegion" : "#fSeason"] = k;
+    return h("td", { class: "num", style: `background: color-mix(in srgb, var(--ok) ${Math.round(share * 45)}%, transparent); cursor: pointer`,
+      title: `${ok} of ${ts.length} verified (${Math.round(share * 100)} %). Click to see them.`, onclick: () => goTiles(filt) }, `${ok}/${ts.length}`);
+  };
+  box.replaceChildren(h("table", {},
+    h("thead", {}, h("tr", {}, h("th", { text: "land cover × " + strataBy }), ...cols.map(k => h("th", { class: "num", text: k })), h("th", { class: "num", text: "all" }))),
+    h("tbody", {}, ...classes.map(c => h("tr", {}, h("td", { text: c }), ...cols.map(k => cell(c, k)), cell(c, null))),
+      h("tr", {}, h("td", {}, h("b", { text: "all" })), ...cols.map(k => cell(null, k)), cell(null, null)))));
+}
+for (const [id, by] of [["#byRegion", "region"], ["#bySeason", "season"]]) {
+  $(id).addEventListener("click", () => {
+    strataBy = by; $("#byRegion").setAttribute("aria-pressed", String(by === "region")); $("#bySeason").setAttribute("aria-pressed", String(by === "season"));
+    strataView();
+  });
+}
+
+/* --- spectra by class --- */
+const PALETTE = ["#5b9cf5", "#f0b44c", "#4cc38a", "#f97066", "#b38cf0", "#2dd4bf", "#f472b6", "#a8b3c2"];
+const median = a => { const s = [...a].sort((x, y) => x - y), m = s.length >> 1; return s.length ? (s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2) : null; };
+function spectraView() {
+  const box = $("#spectraPlot"), order = DATA.bands_order, wl = DATA.wavelength_nm;
+  const ok = DATA.tiles.filter(t => t.state === "COMPLETE");
+  const classes = [...new Set(ok.map(t => t.class))].sort();
+  if (!classes.length) { box.replaceChildren(h("p", { class: "note", text: "No verified tiles yet." })); return; }
+  const series = classes.map((c, i) => {
+    const ts = ok.filter(t => t.class === c);
+    return { name: c, n: ts.length, color: PALETTE[i % PALETTE.length],
+      vals: order.map((_, j) => median(ts.map(t => t.spectrum[j]).filter(v => v != null))) };
+  });
+  const W = 900, H = 390, L = 44, R = 16, T = 12, B = 40, x0 = 400, x1 = 2250;
+  const top = Math.max(0.3, Math.ceil(Math.max(...series.flatMap(s => s.vals.filter(v => v != null))) * 10) / 10);
+  const X = v => L + (v - x0) / (x1 - x0) * (W - L - R), Y = v => T + (1 - v / top) * (H - T - B);
+  const svg = document.createElementNS(NS, "svg");
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`); svg.setAttribute("width", "100%"); svg.setAttribute("role", "img");
+  svg.setAttribute("aria-label", "median reflectance spectrum per land-cover class");
+  const el = (n, a) => { const e = document.createElementNS(NS, n); for (const k in a) e.setAttribute(k, a[k]); svg.append(e); return e; };
+  for (let g = 0; g <= top + 1e-9; g += 0.1) {
+    el("line", { x1: L, x2: W - R, y1: Y(g), y2: Y(g), stroke: "var(--line)" });
+    el("text", { x: L - 6, y: Y(g) + 4, "text-anchor": "end" }).textContent = g.toFixed(1);
+  }
+  let lastX = -1e9, lifted = false;
+  for (const b of order) {
+    const x = X(wl[b]);
+    lifted = x - lastX < 24 && !lifted;  // labels too close: put every second one lower
+    el("line", { x1: x, x2: x, y1: T, y2: H - B, stroke: "var(--line)", "stroke-dasharray": "2 4" });
+    el("text", { x, y: H - (lifted ? 0 : 12), "text-anchor": "middle" }).textContent = b;
+    lastX = x;
+  }
+  for (const s of series) {
+    const pts = order.map((b, j) => [wl[b], s.vals[j], b]).filter(p => p[1] != null);
+    el("polyline", { points: pts.map(p => `${X(p[0])},${Y(p[1])}`).join(" "), fill: "none", stroke: s.color, "stroke-width": 2 });
+    for (const [w, v, b] of pts) {
+      const c = el("circle", { cx: X(w), cy: Y(v), r: 3, fill: s.color });
+      const tt = document.createElementNS(NS, "title"); tt.textContent = `${s.name} · ${b} (${w} nm): ${v.toFixed(4)}`; c.append(tt);
+    }
+  }
+  box.replaceChildren(svg, h("div", { class: "legend", style: "margin-top:8px" },
+    series.map(s => h("span", {}, h("i", { style: `background:${s.color}` }), `${s.name} (${s.n})`))),
+    h("p", { class: "note", text: "Nominal band centres; reflectance = (DN + offset) / 10000. Hover a dot for its value." }));
+}
+
+/* --- timing --- */
+function quantile(a, q) { const s = [...a].sort((x, y) => x - y); return s.length ? s[Math.min(s.length - 1, Math.floor(q * (s.length - 1) + 0.5))] : null; }
+function timingView() {
+  const run = DATA.complete_run, keys = new Map();
+  for (const t of DATA.tiles) for (const [k, v] of Object.entries(t.timings || {})) (keys.get(k) || keys.set(k, []).get(k)).push(v);
+  $("#timingNote").textContent = "Wall-clock seconds per tile and step, from the sidecars" +
+    (run ? `, measured with ${run.workers} workers in parallel; the run as a whole took ${fmt(run.seconds_per_tile, 1)} s per tile (Home).` : ".") +
+    " fetch_* are downloads (retries included); fallback_* only in tiles written by an older version.";
+  const rows = [...keys.entries()].sort((a, b) => (a[0] === "total") - (b[0] === "total") || a[0].localeCompare(b[0]));
+  const maxP90 = Math.max(...rows.map(([, v]) => quantile(v, 0.9)), 1);
+  $("#timingTable").replaceChildren(h("table", {},
+    h("thead", {}, h("tr", {}, ...["step", "tiles", "median", "p90", "max", ""].map((x, i) => h("th", { class: i && i < 5 ? "num" : null, text: x })))),
+    h("tbody", {}, rows.map(([k, v]) => {
+      const med = median(v), p90 = quantile(v, 0.9);
+      return h("tr", {}, h("td", { class: "mono", text: k }), h("td", { class: "num", text: v.length }),
+        h("td", { class: "num", text: fmt(med, 1) }), h("td", { class: "num", text: fmt(p90, 1) }), h("td", { class: "num", text: fmt(Math.max(...v), 1) }),
+        h("td", { style: "width:40%" }, h("div", { style: "position:relative;height:10px;background:var(--panel-2);border-radius:5px" },
+          h("div", { style: `position:absolute;left:0;top:0;bottom:0;width:${100 * med / maxP90}%;background:var(--gee);border-radius:5px`, title: "median" }),
+          h("div", { style: `position:absolute;top:-2px;bottom:-2px;width:2px;left:${100 * p90 / maxP90}%;background:var(--muted)`, title: "p90" }))));
+    }))),
+    h("p", { class: "note", text: "Bar: median; tick: 90th percentile." }));
+}
+
+/* --- curator review list --- */
+function reviewView() {
+  reviewIntro();
+  const marked = DATA.tiles.filter(t => t.review).sort((a, b) => (b.review.at || "").localeCompare(a.review.at || ""));
+  $("#navReview").textContent = marked.length || "";
+  const box = $("#reviewTable");
+  if (!marked.length) {
+    box.replaceChildren(h("p", { class: "note", text: LIVE ? "No marks yet: open a tile, flag it or write a note (Overview tab)." : "No marks. Marks are made in the live report (serve)." }));
+    return;
+  }
+  box.replaceChildren(h("table", {},
+    h("thead", {}, h("tr", {}, ...["tile", "land cover", "verdict", "flagged", "note", "when (UTC)"].map(x => h("th", { text: x })))),
+    h("tbody", {}, marked.map(t => h("tr", {},
+      h("td", {}, h("a", { href: "#review", class: "mono", onclick: e => { e.preventDefault(); openDetail(t, "overview"); }, text: t.name })),
+      h("td", { text: t.class }), h("td", {}, badge(t.state)),
+      h("td", { class: t.review.flag ? "c-no" : "c-na", text: t.review.flag ? "yes" : "no" }),
+      h("td", { style: "white-space:normal;min-width:240px", text: t.review.note || "–" }),
+      h("td", { class: "mono", text: (t.review.at || "").slice(0, 19).replace("T", " ") }))))));
+}
+
+/* --- live (serve) --- */
+function livebar() {
+  const bar = $("#livebar"); bar.replaceChildren();
+  if (!LIVE) return;
+  bar.append(h("span", { class: "live", text: "live" }), h("span", { class: "muted", text: `updated ${new Date().toLocaleTimeString()} · new tiles appear while runs go on` }));
+}
+
+function powerButton() {
+  const b = $("#power");
+  if (!LIVE) { b.remove(); return; }
+  b.hidden = false;
+  b.onclick = async () => {
+    if (!confirm("Stop the live report server?")) return;
+    clearInterval(ticker); hidePeek();
+    await fetch("/shutdown", { method: "POST" }).catch(() => {});
+    document.body.replaceChildren(h("main", {}, h("h1", { text: "Server stopped" }), h("p", { class: "muted", text: "Run `python -m strata_complete serve` again to reopen it." })));
+  };
+}
+
+function drawAll() { header(); funnelPanel(); crossPanel(); bandsPanel(); fillOptions(); render(false); livebar(); strataView(); spectraView(); timingView(); reviewView(); }
+
+async function refresh(force = false) {
+  try {
+    const sig = await (await fetch("/signature", { cache: "no-store" })).json();
+    if (!force && sig.signature === DATA.signature) { livebar(); return; }
+    const res = await fetch("/data.json", { cache: "no-store" });
+    if (res.ok) { DATA = await res.json(); drawAll(); }
+  } catch (e) { /* server busy or stopped: try again on the next tick */ }
+}
+
+header(); funnelPanel(); crossPanel(); bandsPanel(); filters(); render(); livebar(); strataView(); spectraView(); timingView(); reviewView(); showView(); powerButton();
+const ticker = LIVE ? setInterval(refresh, 10000) : null;
+</script>
+</body>
+</html>

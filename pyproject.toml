@@ -1,0 +1,58 @@
+[project]
+name = "strata-complete"
+version = "1.0.0"
+description = "Spectral completion of STRATA-S12 (D_lite) SAR-optical pairs from multiple providers, with per-band provenance and validation."
+readme = "README.md"
+requires-python = ">=3.13"
+authors = [{ name = "Christian Sanchez-Leon" }]
+# Single environment: one image, one lock (requirements.txt, generated from here).
+# Every package is pinned with == here and locked with hashes there.
+# rasterio: read the GeoTIFFs; xxhash: per-pixel integrity checksum of D_lite;
+# pydantic: typed sidecar models and JSON Schema export; earthengine-api: GEE
+# provider; requests: Planetary Computer STAC API and token (also pulled in by
+# the Google libraries; pinned here because the code imports it); tqdm: progress
+# bars for long runs (shards, tars); ruff and uv: lint and lock tools; pytest and
+# prov (the W3C PROV reference library, used only to validate our PROV-JSON in
+# the tests): the test suite.
+dependencies = [
+    "earthengine-api==1.7.49",
+    "prov==3.2.2",
+    "pydantic==2.14.1",
+    "rasterio==1.4.4",
+    "pytest==8.4.2",
+    "requests==2.34.2",
+    "tqdm==4.70.1",
+    "ruff==0.6.9",
+    "uv==0.11.32",
+    "xxhash==4.0.2",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src", "."]
+addopts = "-p no:cacheprovider"
+
+[tool.ruff]
+target-version = "py313"
+line-length = 100
+src = ["src"]
+extend-exclude = ["data", "in", "log", "out"]  # working folders, not versioned
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = [
+    "D",       # docstrings: required on public modules only, reviewed by hand
+    "COM812",  # conflicts with the formatter
+    "ISC001",  # conflicts with the formatter
+    "T201",    # print is the CLI output
+    "EM102",   # messages are assigned to msg first already
+    "TRY003",
+    "CPY001",  # licence header added once the licence is fixed
+    "EXE002",  # bind mounts from some file systems show every file as executable
+]
+
+[tool.ruff.lint.per-file-ignores]
+# pytest style: plain assert, literal expected values, fixtures without annotations,
+# fakes that replace private helpers.
+"tests/**" = ["S101", "PLR2004", "ANN001", "ANN201", "ANN202", "SLF001", "ARG001", "PLR0913"]
+

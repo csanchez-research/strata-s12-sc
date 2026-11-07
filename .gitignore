@@ -1,0 +1,14 @@
+# Working folders: never versioned.
+data/
+in/
+log/
+out/
+
+__pycache__/
+*.pyc
+.ruff_cache/
+*.egg-info/
+*.part
+nexus.env
+gee.env
+.env

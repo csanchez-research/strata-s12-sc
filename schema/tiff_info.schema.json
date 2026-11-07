@@ -1,0 +1,190 @@
+{
+  "$defs": {
+    "BandStats": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "min": {
+          "title": "Min",
+          "type": "number"
+        },
+        "max": {
+          "title": "Max",
+          "type": "number"
+        },
+        "n_zero": {
+          "description": "Pixels exactly equal to 0.",
+          "title": "N Zero",
+          "type": "integer"
+        },
+        "n_nonfinite": {
+          "description": "NaN or infinite pixels.",
+          "title": "N Nonfinite",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "name",
+        "min",
+        "max",
+        "n_zero",
+        "n_nonfinite"
+      ],
+      "title": "BandStats",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "What the GeoTIFF itself says. Used instead of the sidecar where they differ.",
+  "properties": {
+    "path": {
+      "title": "Path",
+      "type": "string"
+    },
+    "width": {
+      "title": "Width",
+      "type": "integer"
+    },
+    "height": {
+      "title": "Height",
+      "type": "integer"
+    },
+    "count": {
+      "title": "Count",
+      "type": "integer"
+    },
+    "dtype": {
+      "title": "Dtype",
+      "type": "string"
+    },
+    "nodata": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Nodata"
+    },
+    "crs": {
+      "title": "Crs",
+      "type": "string"
+    },
+    "transform": {
+      "description": "Affine geotransform (a, b, c, d, e, f) as in rasterio/affine.",
+      "maxItems": 6,
+      "minItems": 6,
+      "prefixItems": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "number"
+        }
+      ],
+      "title": "Transform",
+      "type": "array"
+    },
+    "bounds_native": {
+      "maxItems": 4,
+      "minItems": 4,
+      "prefixItems": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "number"
+        }
+      ],
+      "title": "Bounds Native",
+      "type": "array"
+    },
+    "bounds_wgs84": {
+      "maxItems": 4,
+      "minItems": 4,
+      "prefixItems": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "number"
+        }
+      ],
+      "title": "Bounds Wgs84",
+      "type": "array"
+    },
+    "descriptions": {
+      "items": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "title": "Descriptions",
+      "type": "array"
+    },
+    "xxhash64": {
+      "description": "Recomputed per-pixel checksum (same rule as Integrity).",
+      "title": "Xxhash64",
+      "type": "string"
+    },
+    "bands": {
+      "items": {
+        "$ref": "#/$defs/BandStats"
+      },
+      "title": "Bands",
+      "type": "array"
+    }
+  },
+  "required": [
+    "path",
+    "width",
+    "height",
+    "count",
+    "dtype",
+    "nodata",
+    "crs",
+    "transform",
+    "bounds_native",
+    "bounds_wgs84",
+    "descriptions",
+    "xxhash64",
+    "bands"
+  ],
+  "title": "TiffInfo",
+  "type": "object",
+  "$id": "strata-complete/tiff_info/1.5.0"
+}

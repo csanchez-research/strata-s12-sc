@@ -1,0 +1,25 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "fetch: small record files",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "strata_complete",
+      "args": ["fetch", "examples.zip", "README.md", "lite_manifest.csv", "SHA256SUMS.txt"],
+      "cwd": "${workspaceFolder}",
+      "env": { "PYTHONPATH": "${workspaceFolder}/src" },
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "verify-tar: bare_sparse_vegetation",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "strata_complete",
+      "args": ["verify-tar", "strata-s12_lite_bare_sparse_vegetation.tar"],
+      "cwd": "${workspaceFolder}",
+      "env": { "PYTHONPATH": "${workspaceFolder}/src" },
+      "console": "integratedTerminal"
+    }
+  ]
+}

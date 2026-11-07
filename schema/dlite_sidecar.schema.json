@@ -1,0 +1,751 @@
+{
+  "$defs": {
+    "Acquisition": {
+      "additionalProperties": false,
+      "description": "Common fields, then the fields of one sensor (the others are absent).",
+      "properties": {
+        "download_timestamp": {
+          "format": "date-time",
+          "title": "Download Timestamp",
+          "type": "string"
+        },
+        "satellite_acquisition_time": {
+          "description": "Sensing time of the scene.",
+          "format": "date-time",
+          "title": "Satellite Acquisition Time",
+          "type": "string"
+        },
+        "spacecraft": {
+          "description": "Platform, e.g. 'Sentinel-2B'.",
+          "title": "Spacecraft",
+          "type": "string"
+        },
+        "max_cloud_percentage": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Cloud threshold (null for S1).",
+          "title": "Max Cloud Percentage"
+        },
+        "temporal_pairing_tolerance_days": {
+          "title": "Temporal Pairing Tolerance Days",
+          "type": "integer"
+        },
+        "relative_orbit": {
+          "title": "Relative Orbit",
+          "type": "integer"
+        },
+        "product_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "S2: ESA product name.",
+          "title": "Product Id"
+        },
+        "processing_baseline": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "S2: e.g. 05.11.",
+          "title": "Processing Baseline"
+        },
+        "boa_add_offset": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "number"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "S2: BOA_ADD_OFFSET of each band in the tile.",
+          "title": "Boa Add Offset"
+        },
+        "orbit_direction": {
+          "anyOf": [
+            {
+              "enum": [
+                "ASCENDING",
+                "DESCENDING"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "S1.",
+          "title": "Orbit Direction"
+        },
+        "absolute_orbit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "S1.",
+          "title": "Absolute Orbit"
+        }
+      },
+      "required": [
+        "download_timestamp",
+        "satellite_acquisition_time",
+        "spacecraft",
+        "max_cloud_percentage",
+        "temporal_pairing_tolerance_days",
+        "relative_orbit"
+      ],
+      "title": "Acquisition",
+      "type": "object"
+    },
+    "Classification": {
+      "additionalProperties": false,
+      "properties": {
+        "season": {
+          "description": "Meteorological season, hemisphere-corrected.",
+          "title": "Season",
+          "type": "string"
+        },
+        "hemisphere": {
+          "enum": [
+            "north",
+            "south"
+          ],
+          "title": "Hemisphere",
+          "type": "string"
+        },
+        "season_raw": {
+          "title": "Season Raw",
+          "type": "string"
+        },
+        "land_cover_class": {
+          "description": "Dominant ESA WorldCover 2021 v200 class.",
+          "title": "Land Cover Class",
+          "type": "string"
+        },
+        "class_id": {
+          "title": "Class Id",
+          "type": "integer"
+        },
+        "geographic_region": {
+          "title": "Geographic Region",
+          "type": "string"
+        },
+        "label_purity": {
+          "description": "Fraction covered by the dominant class.",
+          "title": "Label Purity",
+          "type": "number"
+        },
+        "label_composition": {
+          "items": {
+            "$ref": "#/$defs/LabelShare"
+          },
+          "title": "Label Composition",
+          "type": "array"
+        },
+        "label_source": {
+          "title": "Label Source",
+          "type": "string"
+        }
+      },
+      "required": [
+        "season",
+        "hemisphere",
+        "season_raw",
+        "land_cover_class",
+        "class_id",
+        "geographic_region",
+        "label_purity",
+        "label_composition",
+        "label_source"
+      ],
+      "title": "Classification",
+      "type": "object"
+    },
+    "Coordinates": {
+      "additionalProperties": false,
+      "properties": {
+        "lat": {
+          "description": "Latitude of the tile centre, WGS84.",
+          "title": "Lat",
+          "type": "number"
+        },
+        "lon": {
+          "description": "Longitude of the tile centre, WGS84.",
+          "title": "Lon",
+          "type": "number"
+        },
+        "crs": {
+          "description": "Native projected CRS of the raster (local UTM zone).",
+          "title": "Crs",
+          "type": "string"
+        },
+        "datum": {
+          "title": "Datum",
+          "type": "string"
+        },
+        "bbox": {
+          "description": "Footprint in WGS84, [west, south, east, north].",
+          "maxItems": 4,
+          "minItems": 4,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Bbox",
+          "type": "array"
+        }
+      },
+      "required": [
+        "lat",
+        "lon",
+        "crs",
+        "datum",
+        "bbox"
+      ],
+      "title": "Coordinates",
+      "type": "object"
+    },
+    "DataSource": {
+      "additionalProperties": false,
+      "properties": {
+        "provider": {
+          "title": "Provider",
+          "type": "string"
+        },
+        "mission": {
+          "title": "Mission",
+          "type": "string"
+        },
+        "collection": {
+          "description": "Source collection, e.g. COPERNICUS/S2_SR (GEE).",
+          "title": "Collection",
+          "type": "string"
+        },
+        "processing_level": {
+          "title": "Processing Level",
+          "type": "string"
+        }
+      },
+      "required": [
+        "provider",
+        "mission",
+        "collection",
+        "processing_level"
+      ],
+      "title": "DataSource",
+      "type": "object"
+    },
+    "Dimensions": {
+      "additionalProperties": false,
+      "properties": {
+        "width": {
+          "description": "Pixels.",
+          "title": "Width",
+          "type": "integer"
+        },
+        "height": {
+          "description": "Pixels.",
+          "title": "Height",
+          "type": "integer"
+        },
+        "pixel_resolution_m": {
+          "title": "Pixel Resolution M",
+          "type": "integer"
+        },
+        "bands": {
+          "description": "Band names, in storage order.",
+          "items": {
+            "type": "string"
+          },
+          "title": "Bands",
+          "type": "array"
+        },
+        "dtype": {
+          "const": "float32",
+          "title": "Dtype",
+          "type": "string"
+        },
+        "nodata": {
+          "const": "-inf",
+          "description": "The string '-inf': JSON has no infinity.",
+          "title": "Nodata",
+          "type": "string"
+        }
+      },
+      "required": [
+        "width",
+        "height",
+        "pixel_resolution_m",
+        "bands",
+        "dtype",
+        "nodata"
+      ],
+      "title": "Dimensions",
+      "type": "object"
+    },
+    "Integrity": {
+      "additionalProperties": false,
+      "properties": {
+        "checksum": {
+          "description": "xxHash64 (hex) of the decoded pixel array, read whole and in band order (bands, height, width), float32, C order. Not a hash of the file bytes.",
+          "title": "Checksum",
+          "type": "string"
+        },
+        "algorithm": {
+          "const": "xxhash64",
+          "title": "Algorithm",
+          "type": "string"
+        },
+        "note": {
+          "title": "Note",
+          "type": "string"
+        }
+      },
+      "required": [
+        "checksum",
+        "algorithm",
+        "note"
+      ],
+      "title": "Integrity",
+      "type": "object"
+    },
+    "LabelShare": {
+      "additionalProperties": false,
+      "properties": {
+        "class_id": {
+          "description": "ESA WorldCover class code.",
+          "title": "Class Id",
+          "type": "integer"
+        },
+        "class_name": {
+          "title": "Class Name",
+          "type": "string"
+        },
+        "ratio": {
+          "description": "Fraction of the tile covered by this class.",
+          "title": "Ratio",
+          "type": "number"
+        }
+      },
+      "required": [
+        "class_id",
+        "class_name",
+        "ratio"
+      ],
+      "title": "LabelShare",
+      "type": "object"
+    },
+    "License": {
+      "additionalProperties": false,
+      "properties": {
+        "source": {
+          "title": "Source",
+          "type": "string"
+        },
+        "terms": {
+          "title": "Terms",
+          "type": "string"
+        },
+        "url": {
+          "title": "Url",
+          "type": "string"
+        },
+        "citation": {
+          "title": "Citation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source",
+        "terms",
+        "url",
+        "citation"
+      ],
+      "title": "License",
+      "type": "object"
+    },
+    "Provenance": {
+      "additionalProperties": false,
+      "properties": {
+        "dataset_version": {
+          "title": "Dataset Version",
+          "type": "string"
+        },
+        "processing_timestamp": {
+          "description": "Build date of the D_lite version.",
+          "format": "date-time",
+          "title": "Processing Timestamp",
+          "type": "string"
+        },
+        "sentinel2_image_id": {
+          "description": "GEE system:index of the Sentinel-2 scene, with collection prefix.",
+          "title": "Sentinel2 Image Id",
+          "type": "string"
+        },
+        "sentinel1_image_id": {
+          "description": "GEE id of the Sentinel-1 scene; the last part is the full ESA product name.",
+          "title": "Sentinel1 Image Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "dataset_version",
+        "processing_timestamp",
+        "sentinel2_image_id",
+        "sentinel1_image_id"
+      ],
+      "title": "Provenance",
+      "type": "object"
+    },
+    "QualityMetrics": {
+      "additionalProperties": false,
+      "properties": {
+        "temporal_gap_days": {
+          "description": "|S1 - S2| sensing time difference, days.",
+          "title": "Temporal Gap Days",
+          "type": "number"
+        },
+        "note": {
+          "title": "Note",
+          "type": "string"
+        },
+        "straight_seam": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/S2Seam"
+            },
+            {
+              "$ref": "#/$defs/S1Seam"
+            }
+          ],
+          "title": "Straight Seam"
+        },
+        "sar_cross": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SarCross"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "S1 only."
+        }
+      },
+      "required": [
+        "temporal_gap_days",
+        "note",
+        "straight_seam"
+      ],
+      "title": "QualityMetrics",
+      "type": "object"
+    },
+    "S1Seam": {
+      "additionalProperties": false,
+      "description": "Straight-seam indicator of a Sentinel-1 tile (an indication, not a verdict).",
+      "properties": {
+        "found": {
+          "title": "Found",
+          "type": "boolean"
+        },
+        "step_db": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Step Db"
+        },
+        "band": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Band"
+        },
+        "angle_deg": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Angle Deg"
+        },
+        "offset_px": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Offset Px"
+        },
+        "in_s2": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "In S2"
+        },
+        "method": {
+          "title": "Method",
+          "type": "string"
+        },
+        "version": {
+          "title": "Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "found",
+        "step_db",
+        "band",
+        "angle_deg",
+        "offset_px",
+        "in_s2",
+        "method",
+        "version"
+      ],
+      "title": "S1Seam",
+      "type": "object"
+    },
+    "S2Seam": {
+      "additionalProperties": false,
+      "description": "Straight-seam indicator of a Sentinel-2 tile (an indication, not a verdict).",
+      "properties": {
+        "found": {
+          "title": "Found",
+          "type": "boolean"
+        },
+        "step_dn": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Step Dn"
+        },
+        "angle_deg": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Angle Deg"
+        },
+        "offset_px": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Offset Px"
+        },
+        "in_s1": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "In S1"
+        },
+        "method": {
+          "title": "Method",
+          "type": "string"
+        },
+        "version": {
+          "title": "Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "found",
+        "step_dn",
+        "angle_deg",
+        "offset_px",
+        "in_s1",
+        "method",
+        "version"
+      ],
+      "title": "S2Seam",
+      "type": "object"
+    },
+    "SarCross": {
+      "additionalProperties": false,
+      "description": "SAR sidelobe cross indicator of a Sentinel-1 tile (an indication, not a verdict).",
+      "properties": {
+        "n_crosses": {
+          "title": "N Crosses",
+          "type": "integer"
+        },
+        "longest_arm_px": {
+          "title": "Longest Arm Px",
+          "type": "integer"
+        },
+        "band": {
+          "title": "Band",
+          "type": "string"
+        },
+        "method": {
+          "title": "Method",
+          "type": "string"
+        },
+        "version": {
+          "title": "Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "n_crosses",
+        "longest_arm_px",
+        "band",
+        "method",
+        "version"
+      ],
+      "title": "SarCross",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Sidecar of one D_lite tile (one sensor of one pair).",
+  "properties": {
+    "tile_id": {
+      "description": "Geographic cell; repeats across pairs on purpose.",
+      "title": "Tile Id",
+      "type": "string"
+    },
+    "pair_id": {
+      "description": "This S1-S2 pairing. A pair is tile_id + pair_id.",
+      "title": "Pair Id",
+      "type": "string"
+    },
+    "filename": {
+      "title": "Filename",
+      "type": "string"
+    },
+    "sensor": {
+      "enum": [
+        "S1",
+        "S2"
+      ],
+      "title": "Sensor",
+      "type": "string"
+    },
+    "integrity": {
+      "$ref": "#/$defs/Integrity"
+    },
+    "coordinates": {
+      "$ref": "#/$defs/Coordinates"
+    },
+    "dimensions": {
+      "$ref": "#/$defs/Dimensions"
+    },
+    "classification": {
+      "$ref": "#/$defs/Classification"
+    },
+    "data_source": {
+      "$ref": "#/$defs/DataSource"
+    },
+    "acquisition": {
+      "$ref": "#/$defs/Acquisition"
+    },
+    "license": {
+      "$ref": "#/$defs/License"
+    },
+    "provenance": {
+      "$ref": "#/$defs/Provenance"
+    },
+    "quality_metrics": {
+      "$ref": "#/$defs/QualityMetrics"
+    },
+    "stac_version": {
+      "title": "Stac Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "tile_id",
+    "pair_id",
+    "filename",
+    "sensor",
+    "integrity",
+    "coordinates",
+    "dimensions",
+    "classification",
+    "data_source",
+    "acquisition",
+    "license",
+    "provenance",
+    "quality_metrics",
+    "stac_version"
+  ],
+  "title": "DliteSidecar",
+  "type": "object",
+  "$id": "strata-complete/dlite_sidecar/1.5.0"
+}

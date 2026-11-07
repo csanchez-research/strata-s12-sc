@@ -1,0 +1,75 @@
+services:
+  dev:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    image: strata-complete:dev
+    # Another name and host port (SC_SERVE_HOST_PORT) let two copies of the project run at once.
+    container_name: ${SC_CONTAINER_NAME:-strata-complete}
+    working_dir: /workspace
+    # Interactive console: the container starts in bash and stays open.
+    stdin_open: true
+    tty: true
+    # Optional: Nexus settings (nexus.env) and the Earth Engine project (gee.env).
+    env_file:
+      - path: nexus.env
+        required: false
+      - path: ${SC_GEE_ENV:-gee.env}
+        required: false
+    volumes:
+      # Project folder: code and working folders (data/ in/ log/ out/) are the
+      # same files inside and outside the container, never inside the image.
+      # Long bind syntax, which every Docker host translates the same way.
+      - type: bind
+        source: .
+        target: /workspace
+      # Earth Engine user credentials (the folder with the `credentials` file written by
+      # `earthengine authenticate`), outside the project, git and the image. Default
+      # ../.credentials/earthengine; another place: SC_EARTHENGINE_DIR in .env. The
+      # container does not start if the folder is missing.
+      - type: bind
+        source: ${SC_EARTHENGINE_DIR:-../.credentials/earthengine}
+        target: /root/.config/earthengine
+      # Where out/ lives. Default: out/ of the project. Large outputs can live on
+      # another folder or disk: SC_OUT_HOST_DIR in .env.
+      - type: bind
+        source: ${SC_OUT_HOST_DIR:-./out}
+        target: /workspace/out
+        bind:
+          create_host_path: true
+      # Where out/release_all lives. Default: inside out/. A release shared with another
+      # project goes in a folder of its own: SC_RELEASE_HOST_DIR in .env.
+      - type: bind
+        source: ${SC_RELEASE_HOST_DIR:-${SC_OUT_HOST_DIR:-./out}/release_all}
+        target: /workspace/out/release_all
+        bind:
+          create_host_path: true
+      # Optional: outputs of another project (for example a release), read-only at /ro.
+      - type: bind
+        source: ${SC_RO_HOST_DIR:-./data/ro}
+        target: /ro
+        read_only: true
+        bind:
+          create_host_path: true
+      # Optional local copy of the D_lite 2.0.0 record, read-only. Set
+      # SC_RECORD_HOST_DIR (the folder) and SC_RECORD_DIR=/data/dlite_v2 in a .env
+      # file next to this file; without them the record is read from Zenodo.
+      - type: bind
+        source: ${SC_RECORD_HOST_DIR:-./data/record}
+        target: /data/dlite_v2
+        read_only: true
+        bind:
+          create_host_path: true
+    # Viewer (`serve`): published on the host's loopback only, because the page
+    # has no login. `docker compose run` publishes it only with --service-ports. The
+    # port is the same inside and outside, so the address `serve` prints is right on
+    # the host and in VS Code (which maps a localhost link to the container's port).
+    ports:
+      - "${SC_SERVE_BIND:-127.0.0.1}:${SC_SERVE_HOST_PORT:-8765}:${SC_SERVE_HOST_PORT:-8765}"
+    environment:
+      # Where the record is read from (see dlite/record.py).
+      SC_RECORD_DIR: ${SC_RECORD_DIR:-}
+      # Name of this container, greeted by every shell (HOLA <name>).
+      SC_CONTAINER_NAME: ${SC_CONTAINER_NAME:-strata-complete}
+      # Port of the viewer, the same as on the host.
+      SC_SERVE_PORT: ${SC_SERVE_HOST_PORT:-8765}
