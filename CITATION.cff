@@ -3,7 +3,9 @@ message: "If you use this software, please cite it as below, together with the S
 title: "strata-complete: spectral completion of STRATA-S12 SAR-optical pairs"
 type: software
 version: 1.0.0
+doi: 10.5281/zenodo.24032849
 license: MIT
+repository-code: "https://github.com/csanchez-research/strata-s12-sc"
 authors:
   - family-names: Sanchez-Leon
     given-names: Christian

@@ -1,5 +1,7 @@
 # strata-complete
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24032849.svg)](https://doi.org/10.5281/zenodo.24032849)
+
 `strata-complete` adds every Sentinel-2 Level-2A band that is missing from the
 published Sentinel-1/Sentinel-2 pairs of STRATA-S12 (D_lite) 2.0.0, and checks each
 added band against the bands already published. The output is the dataset
@@ -520,7 +522,8 @@ most never need changing:
 
 ## Citation and licence
 
-Cite with `CITATION.cff`, together with the D_lite dataset. Code: MIT (`LICENSE`).
+Cite with `CITATION.cff` (code: DOI [10.5281/zenodo.24032849](https://doi.org/10.5281/zenodo.24032849),
+all versions), together with the D_lite dataset. Code: MIT (`LICENSE`).
 Data: the licence of each Zenodo record.
 
 STRATA-S12-SC 1.0.0 (DOI 10.5281/zenodo.23888967) was built with version 0.1.0.dev0 of
